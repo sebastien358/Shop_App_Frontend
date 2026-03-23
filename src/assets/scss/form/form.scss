@@ -1,0 +1,23 @@
+.container-form {
+  padding: 20px;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  background-color: var(--text-primary-color);
+  width: 100%;
+  h3 {
+    font-size: 17px;
+  }
+  label {
+    font-size: 13px;
+    color: var(--gray-3);
+  }
+  input {
+    border: 0;
+    padding: 9px;
+  }
+  .error-field {
+    color: var(--danger-1);
+    font-size: 12px;
+    margin-top: 5px;
+  }
+}

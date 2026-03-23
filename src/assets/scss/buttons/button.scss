@@ -1,0 +1,85 @@
+@use '@/assets/scss/mixins' as m;
+
+.btn {
+  cursor: pointer;
+  color: var(--text-primary-color);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  border: 0;
+  padding: 8px;
+  font-size: 12px;
+  &-primary {
+    background-color: var(--primary-1);
+    &:hover {
+      background-color: var(--primary-2);
+    }
+  }
+  &-danger {
+    background-color: var(--danger-1);
+    &:hover {
+      background-color: var(--danger-2);
+    }
+  }
+  &-success {
+    background-color: var(--success-1);
+    &:hover {
+      background-color: var(--success-2);
+    }
+  }
+  &-black {
+    padding: 15px;
+    font-size: 14px;
+    background-color: #4b4b4b;
+    &:hover {
+      background-color: #3d3d3d;
+    }
+  }
+  &-pagination {
+    padding: 10px;
+    font-size: 10px;
+    background-color: #4b4b4b;
+    width: 72px;
+    &:hover {
+      background-color: #3d3d3d;
+    }
+  }
+  &-info {
+    font-size: 10px;
+    width: 150px;
+    border: 3px solid black;
+    border-radius: 0;
+    color: black;
+    padding: 13px 0;
+    background-color: var(--text-primary-color);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &-command {
+    font-size: 10px;
+    width: 150px;
+    border: 3px solid black;
+    border-radius: 0;
+    color: black;
+    padding: 13px 0;
+    background-color: var(--text-primary-color);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      color: var(--text-primary-color);
+      background-color: black;
+    }
+  }
+  &-finish {
+    font-size: 15px;
+    background-color: var(--success-1);
+    padding: 20px;
+    &:hover {
+      color: var(--text-primary-color);
+      background-color: var(--success-2);
+    }
+  }
+}
