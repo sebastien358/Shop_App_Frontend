@@ -3,7 +3,7 @@ import CommandProgress from '@/templates/commandProgress/CommandProgress.vue'
 import AlertMessage from '@/templates/alertMessage/AlertMessage.vue'
 import { useCartStore } from '@/stores/cartStore.ts'
 import { useCommandUserStore } from '@/stores/user/commandUserStore'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 const stripe = ref(null)
 const cardStripe = ref(null)
 const cardElement = ref(null)
@@ -13,22 +13,97 @@ import { useRoute } from 'vue-router'
 
 const BASE_URL = 'http://localhost:8000'
 
+// Paiment d'une commande puis le panier
+
 const cartStore = useCartStore()
+
+type CartItems = {
+  id: number
+  title: string
+  price: number
+  quantity: number
+}
+
+type Cart = {
+  id: number
+  cartItems: CartItems[]
+}
+
+const stateCart = reactive({
+  id: cartStore.cart.id || 0,
+  cartItems: cartStore.cart ? [...cartStore.cart] : [],
+})
+
+// Paiment d'une commande depuis le profil user : ID
+
 const commandStore = useCommandUserStore()
 
 const route = useRoute()
 
+type Product = {
+  id: number
+  title: string
+  description: string
+}
+
+type CommandItems = {
+  id: number
+  title: string
+  quantity: number
+  product: Product
+}
+
+type Command = {
+  id: number
+  commandItems: CommandItems
+}
+
+const stateCommand = reactive<Command>({
+  id: 0,
+  commandItems: [],
+})
+
 onMounted(async () => {
   try {
     const id = Number(route.params.id)
-    if (!id) return
-    const command = await commandStore.getCurrentCommand(id)
-    console.log(command)
+    if (id) {
+      const command = await commandStore.getCurrentCommand(id)
+      Object.assign(stateCommand, {
+        id: command.id,
+        commandItems: command.commandItems,
+      })
+      console.log(stateCommand)
+    } else {
+      await cartStore.getProductToCart()
+
+      // Ici on prend directement les éléments du panier et on transforme le proxy en tableau normal
+
+      const cartItems = cartStore.cart.cartItems.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+        quantity: item.quantity,
+        product: item.product,
+      }))
+
+      Object.assign(stateCart, {
+        id: cartStore.cart.id || 0,
+        cartItems,
+      })
+    }
   } catch (e) {
     console.error(e)
   }
 })
 
+// Produit et quantité à envoyer eu backend
+
+const itemsToPay = stateCart.cartItems.map((item) => ({
+  productId: item.product.id, // ID du produit
+  quantity: item.quantity, // Quantité commandée
+}))
+
+// Configuration de Strype
 
 const strypePayment = async () => {
   try {
@@ -69,7 +144,22 @@ const handleSubmit = async () => {
       return
     }
 
-    const response = await axios.post(`${BASE_URL}/api/payment`, { token: token.id })
+    // 🔹 Condition selon le type de commande
+    let payload: any = { token: token.id }
+
+    if (stateCommand.id) {
+      // Commande depuis le profil user
+      payload.commandId = stateCommand.id
+    } else {
+      // Commande depuis le panier
+      payload.items = stateCart.cartItems.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+      }))
+    }
+
+    // Envoi au back-end
+    const response = await axios.post(`${BASE_URL}/api/payment`, payload)
 
     switch (response.data.type) {
       case 'SUCCESS_PAYMENT':

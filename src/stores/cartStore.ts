@@ -24,14 +24,12 @@ export const useCartStore = defineStore('cart', {
     }
   },
   actions: {
-    saveCart() {
-      localStorage.setItem('cart', JSON.stringify(this.cart))
-    },
     async getProductToCart(): Promise<void> {
       try {
         const response = await axiosGetProductToCart()
         if (response) {
           this.cart = Array.isArray(response) ? response : [response]
+
         } else {
           console.log('La response est vide')
         }

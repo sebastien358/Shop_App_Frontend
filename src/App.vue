@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import Header from '@/templates/header/Header.vue'
 import Footer from '@/templates/footer/Footer.vue'
-import { useCartStore } from '@/stores/cartStore.ts'
-import { subscribe } from 'diagnostics_channel'
-
-const cartStore = useCartStore()
-
-cartStore.$subscribe(() => {
-  cartStore.saveCart()
-})
 </script>
 
 <template>
