@@ -2,16 +2,33 @@
 import CommandProgress from '@/templates/commandProgress/CommandProgress.vue'
 import AlertMessage from '@/templates/alertMessage/AlertMessage.vue'
 import { useCartStore } from '@/stores/cartStore.ts'
+import { useCommandUserStore } from '@/stores/user/commandUserStore'
 import { onMounted, ref } from 'vue'
 const stripe = ref(null)
 const cardStripe = ref(null)
 const cardElement = ref(null)
 import { loadStripe } from '@stripe/stripe-js'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
 
 const BASE_URL = 'http://localhost:8000'
 
 const cartStore = useCartStore()
+const commandStore = useCommandUserStore()
+
+const route = useRoute()
+
+onMounted(async () => {
+  try {
+    const id = Number(route.params.id)
+    if (!id) return
+    const command = await commandStore.getCurrentCommand(id)
+    console.log(command)
+  } catch (e) {
+    console.error(e)
+  }
+})
+
 
 const strypePayment = async () => {
   try {

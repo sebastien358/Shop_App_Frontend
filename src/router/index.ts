@@ -33,6 +33,14 @@ const routes = [
     },
   },
   {
+    path: '/payment/:id',
+    name: 'payment-command',
+    component: Payment,
+    meta: {
+      requiresUser: true,
+    },
+  },
+  {
     path: '/finish',
     component: Finish,
     meta: {

@@ -14,12 +14,34 @@ onMounted(async () => {
   }
 })
 
-const isPaid = (command) => {
-  return command.status === 'Payé'
+const paymentStatus = (command) => {
+  switch (command.status) {
+    case 'En attente':
+      return 'status-pending'
+    case 'Payé':
+      return 'status-paid'
+    case 'Échouée':
+      return 'status-failed'
+    case 'Annulée':
+      return 'status-cancelled'
+    default:
+      return ''
+  }
 }
 
-const isPaidButton = (command) => {
-  return command.status === 'Payé'
+// Couleurs des différents status de la commande
+
+const selectedPreparationStatus = (command) => {
+  switch (command.preparationStatus) {
+    case 'En cours':
+      return 'status-pending'
+    case 'Expédié':
+      return 'status-shipped'
+    case 'Livré':
+      return 'status-delivered'
+    default:
+      return ''
+  }
 }
 
 const removeCommand = async (id: number) => {
@@ -59,17 +81,32 @@ const removeCommand = async (id: number) => {
       </div>
 
       <!-- Statut commande -->
-      <p :class="isPaid(command) ? 'status-paid' : 'status-failed'">
-        Statut : {{ command.status }}
-      </p>
+      <div class="command-user__status">
+        <p>
+          Paiment :
+          <span :class="paymentStatus(command)">
+            {{ command.status }}
+          </span>
+        </p>
 
-      <!-- Bouton supprimer -->
-      <button
-        @click="removeCommand(command.id)"
-        :class="isPaidButton(command) ? 'no-button' : 'active-button'"
-      >
-        Supprimer
-      </button>
+        <p>
+          Préparation de la commande :
+          <span :class="selectedPreparationStatus(command)">
+            {{ command.preparationStatus }}
+          </span>
+        </p>
+      </div>
+
+      <!-- Bouton : passer une commande, supprimer une commade -->
+      <div class="command-user__buttons">
+        <router-link :to="{ name: 'payment-command', params: { id: command.id } }" class="btn btn-command-paid">Payé</router-link>
+        <button
+          @click="removeCommand(command.id)"
+          class="btn btn-delete"
+        >
+          Supprimer
+        </button>
+      </div>
     </div>
   </div>
 
@@ -121,6 +158,40 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 
+.command-user__status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  p,
+  span {
+    font-size: 13px;
+  }
+  .status-pending {
+    color: orange;
+    font-weight: bold;
+  }
+
+  .status-shipped {
+    color: #3498db;
+    font-weight: bold;
+  }
+
+  .status-delivered {
+    color: #2ecc71;
+    font-weight: bold;
+  }
+
+  .status-failed {
+    color: red;
+    font-weight: bold;
+  }
+
+  .status-cancelled {
+    color: red;
+    font-weight: bold;
+  }
+}
+
 .command-user {
   padding: 20px;
   display: flex;
@@ -158,33 +229,33 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
       }
     }
-    .status-paid {
-      color: green;
-      font-weight: bold;
-    }
-    .status-failed {
-      color: red;
-      font-weight: bold;
-    }
-    button {
-      padding: 0.5rem 1rem;
+  }
+}
+
+.command-user__buttons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  .btn {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    font-size: 11px;
+    &-command-paid {
+      width: auto;
+      color: white;
+      background: green;
+      padding: 0.6rem 1rem;
       border-radius: 6px;
       font-weight: bold;
       border: none;
       cursor: pointer;
-      margin-top: 0.5rem;
-      &.active-button {
-        background-color: #e74c3c;
-        color: white;
-        &:hover {
-          background-color: #c0392b;
-        }
-      }
-      &.no-button {
-        background-color: #ccc;
-        color: #666;
-        cursor: not-allowed;
-      }
+    }
+    &-delete {
+      background: red;
     }
   }
 }
