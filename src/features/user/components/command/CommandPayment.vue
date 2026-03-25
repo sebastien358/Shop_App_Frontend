@@ -98,11 +98,6 @@ onMounted(async () => {
 
 // Produit et quantité à envoyer eu backend
 
-const itemsToPay = stateCart.cartItems.map((item) => ({
-  productId: item.product.id, // ID du produit
-  quantity: item.quantity, // Quantité commandée
-}))
-
 // Configuration de Strype
 
 const strypePayment = async () => {
@@ -126,6 +121,8 @@ const strypePayment = async () => {
 onMounted(async () => {
   await strypePayment()
 })
+
+// Step
 
 const currentStep = ref<number>(3)
 

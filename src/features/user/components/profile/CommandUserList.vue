@@ -99,13 +99,12 @@ const removeCommand = async (id: number) => {
 
       <!-- Bouton : passer une commande, supprimer une commade -->
       <div class="command-user__buttons">
-        <router-link :to="{ name: 'payment-command', params: { id: command.id } }" class="btn btn-command-paid">Payé</router-link>
-        <button
-          @click="removeCommand(command.id)"
-          class="btn btn-delete"
+        <router-link
+          :to="{ name: 'payment-command', params: { id: command.id } }"
+          class="btn btn-command-paid"
+          >Payé</router-link
         >
-          Supprimer
-        </button>
+        <button @click="removeCommand(command.id)" class="btn btn-delete">Supprimer</button>
       </div>
     </div>
   </div>
@@ -170,22 +169,22 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     color: orange;
     font-weight: bold;
   }
-
   .status-shipped {
     color: #3498db;
     font-weight: bold;
   }
-
+  .status-paid {
+    color: #2ecc71;
+    font-weight: bold;
+  }
   .status-delivered {
     color: #2ecc71;
     font-weight: bold;
   }
-
   .status-failed {
     color: red;
     font-weight: bold;
   }
-
   .status-cancelled {
     color: red;
     font-weight: bold;

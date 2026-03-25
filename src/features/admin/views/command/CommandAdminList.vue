@@ -16,6 +16,8 @@ onMounted(async () => {
 const commands = computed(() => commandAdminStore.commands)
 
 const paymentStatus = (command) => {
+  console.log('STATUS : ', command.status)
+
   switch (command.status) {
     case 'En attente':
       return 'status-pending'
@@ -190,6 +192,11 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   .status-shipped {
     color: #3498db;
+    font-weight: bold;
+  }
+
+  .status-paid {
+    color: #2ecc71;
     font-weight: bold;
   }
 

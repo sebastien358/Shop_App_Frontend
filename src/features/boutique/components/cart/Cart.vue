@@ -24,11 +24,16 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const toGoCommand = () => {
-  if (authStore.isLoggedIn && props.cart.length > 0) {
-    router.push({ path: '/command-address' })
+  if (!authStore.isLoggedIn) {
+    router.push({ path: '/login' })
     return
   }
-  router.push({ path: '/login' })
+
+  if (props.cart.length === 0) {
+    return
+  }
+
+  router.push({ path: '/command-address' })
 }
 </script>
 
