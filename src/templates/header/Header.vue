@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/authStore.ts'
 import { useRouter } from 'vue-router'
-import { computed, onMounted, reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useCommandUserStore } from '@/stores/user/commandUserStore.ts'
 
 const authStore = useAuthStore()
@@ -49,18 +49,6 @@ const logout = () => {
   router.push({ path: '/login' })
 }
 
-// Récupératio ID commande afin de modifier les données utilisateurs : Adresse
-
-const commandUserStore = useCommandUserStore()
-
-onMounted(async () => {
-  try {
-    await commandUserStore.getCommandUserList()
-  } catch (e) {
-    console.error(e)
-  }
-})
-
 // Récupération de l'ID utlisateur, puis redirection et modification des données
 
 onMounted(async () => {
@@ -102,6 +90,7 @@ onMounted(async () => {
               <div class="dropdown-divider"></div>
             </div>
           </li>
+
           <li
             v-if="isUser()"
             class="dropdown"
@@ -141,7 +130,9 @@ onMounted(async () => {
         </div>
       </ul>
     </div>
+
     <!-- Menu tablet -->
+
     <div class="container-tablet">
       <font-awesome-icon
         @click="state.openMenuMobile = !state.openMenuMobile"
@@ -157,7 +148,7 @@ onMounted(async () => {
           @mouseover="openDropdown('admin')"
           @mouseout="closeDropdown()"
         >
-          <a href="#">Admin</a>
+          <a href="#" class="link-profile-admin">Admin</a>
           <div class="dropdown-menu" :class="{ show: state.activeDropdown === 'admin' }">
             <div class="d-flex flex-column dropdown-menu-link">
               <router-link to="/admin">Admin</router-link>
@@ -169,6 +160,7 @@ onMounted(async () => {
             <div class="dropdown-divider"></div>
           </div>
         </li>
+
         <li
           v-if="isUser()"
           class="dropdown"
@@ -176,15 +168,18 @@ onMounted(async () => {
           @mouseout="closeDropdown()"
           :class="isAdmin() ? 'no-profile-user' : null"
         >
-          <a href="#">Profil</a>
+          <a href="#" class="link-profile-user">Profil</a>
           <div class="dropdown-menu" :class="{ show: (state.activeDropdown = 'user') }">
             <div class="d-flex flex-column dropdown-menu-link">
               <router-link to="/command/user/list">Mes commandes</router-link>
-              <router-link to="">Modifier mon compte</router-link>
+              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
+                >Modifier mon compte</router-link
+              >
             </div>
             <div class="dropdown-divider"></div>
           </div>
         </li>
+
         <div v-if="!isLoggedIn()">
           <li>
             <router-link :to="{ path: '/register' }">Inscription</router-link>
@@ -251,6 +246,12 @@ onMounted(async () => {
 .dropdown {
   z-index: 1;
   position: relative;
+  .link-profile-user,
+  .link-profile-admin {
+    @media (max-width: 991.98px) {
+      display: none;
+    }
+  }
   .dropdown-menu {
     position: absolute;
     box-shadow:
@@ -264,6 +265,12 @@ onMounted(async () => {
     opacity: 0.5;
     transition: all 500ms ease;
     width: 290px;
+    @media (max-width: 991.98px) {
+      width: 150px;
+      position: initial;
+      box-shadow: none;
+      padding: 0;
+    }
     &.show {
       opacity: 1;
       visibility: visible;

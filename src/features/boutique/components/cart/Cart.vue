@@ -6,6 +6,9 @@ import type { CartProductInterface } from '@/shared/interfaces'
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
 
+const authStore = useAuthStore()
+const router = useRouter()
+
 const state = reactive<{
   open: boolean
 }>({
@@ -20,9 +23,6 @@ const props = defineProps<{
 
 // gestion des roles et redirection
 
-const authStore = useAuthStore()
-const router = useRouter()
-
 const toGoCommand = () => {
   if (!authStore.isLoggedIn) {
     router.push({ path: '/login' })
@@ -35,19 +35,23 @@ const toGoCommand = () => {
 
   router.push({ path: '/command-address' })
 }
+
+const openCart = () => {
+  if (!authStore.isLoggedIn) {
+    router.push({ path: '/login' })
+    return
+  }
+
+  state.open = true
+}
 </script>
 
 <template>
   <div class="cart-fixed">
     <transition mode="out-in">
-      <div
-        @click="state.open = true"
-        v-if="!state.open"
-        class="toggle-cart"
-        :class="{ active: cart.length > 0 }"
-      >
+      <div @click="openCart()" v-if="!state.open" class="toggle-cart" :class="{ active: authStore.isLoggedIn && cart.length > 0 }">
         <div class="nbr-products">
-          <span>{{ cart.length }}</span>
+          <span>{{ authStore.isLoggedIn ? props.cart.length : 0 }}</span>
         </div>
         <font-awesome-icon icon="fa-solid fa-basket-shopping" />
       </div>
@@ -74,11 +78,18 @@ const toGoCommand = () => {
   position: fixed;
   bottom: 15px;
   right: 20px;
+  @media (max-width: 767.98px) {
+    right: 10px;
+  }
   .toggle-cart {
     cursor: pointer;
     position: relative;
     height: 70px;
     width: 70px;
+    @media (max-width: 767.98px) {
+      width: 60px;
+      height: 60px;
+    }
     background-color: var(--primary-1);
     border-radius: 50%;
     @include displayCenter();
@@ -106,10 +117,13 @@ const toGoCommand = () => {
     }
   }
   .cart {
-    width: 530px;
+    width: 480px;
     padding: 15px 8px 6px 8px;
     border: var(--border);
     background-color: var(--text-primary-color);
+    @media (max-width: 767.98px) {
+      width: 330px;
+    }
     h4 {
       margin-bottom: 10px;
     }
@@ -126,6 +140,8 @@ const toGoCommand = () => {
     }
   }
 }
+
+// Transition Vue.js
 
 .v-enter-active,
 .v-leave-active {

@@ -1,17 +1,23 @@
 import { defineStore } from 'pinia'
-import { axiosAddProductAdmin, axiosdeleteProductAdmin, axiosGetProductAdmin } from '@/shared/services/admin/productAdmin.service.ts'
+import {
+  axiosAddProductAdmin,
+  axiosDeleteProductAdmin,
+  axiosGetProductAdmin,
+} from '@/shared/services/admin/productAdmin.service.ts'
 import { useProductStore } from '@/stores/productStore.ts'
 import type { ProductFormInterface, ProductInterface } from '@/shared/interfaces'
 
 interface ProductAdminState {
-  product: ProductInterface[],
+  product: ProductInterface[]
   countProduct: number
+  pages: number
 }
 
 export const useProductAdminStore = defineStore('productAdmin', {
   state: (): ProductAdminState => ({
     product: [],
-    countProduct: 0
+    countProduct: 0,
+    pages: 0
   }),
   actions: {
     async getAdminProducts(currentPage: number, itemPerPage: number): Promise<void> {
@@ -21,6 +27,7 @@ export const useProductAdminStore = defineStore('productAdmin', {
           const products: ProductInterface[] = response.products
           this.product = products
           this.countProduct = response.total
+          this.pages = response.pages
         } else {
            console.log('La response est vide')
         }
@@ -30,17 +37,14 @@ export const useProductAdminStore = defineStore('productAdmin', {
     },
     async addAdminProduct(dataProduct: ProductFormInterface): Promise<void> {
       try {
-        const { title, price, description, category, images } = dataProduct
-
         const formData = new FormData()
+        formData.append('title', dataProduct.title)
+        formData.append('price', dataProduct.price)
+        formData.append('description', dataProduct.description)
+        formData.append('category', dataProduct.category)
 
-        formData.append('title', title)
-        formData.append('price', price)
-        formData.append('description', description)
-        formData.append('category', category)
-
-        if (images && images.length > 0) {
-          images.forEach((image) => {
+        if (dataProduct.images && dataProduct.images.length > 0) {
+          dataProduct.images.forEach((image) => {
             formData.append('images[]', image)
           })
         }
@@ -48,24 +52,22 @@ export const useProductAdminStore = defineStore('productAdmin', {
         const productStore = useProductStore()
 
         const response = await axiosAddProductAdmin(formData)
-        if (response) {
-          productStore.product.push(response)
-          this.product.push(response)
-          return
-        }
+        productStore.product.push(response)
+        this.product.push(response)
+        return response
       } catch(e) {
         console.error(e)
+        throw e
       }
     },
     async deleteProduct(id: ProductInterface) {
       try {
-        const response = await axiosdeleteProductAdmin(id)
-        if (response) {
-          this.product = this.product.filter((p) => p.id !== id)
-          await this.getAdminProducts()
-        }
+        await axiosDeleteProductAdmin(id)
+        this.product = this.product.filter((p) => p.id !== id)
+        await this.getAdminProducts()
       } catch(e) {
         console.error(e)
+        throw e
       }
     }
   }

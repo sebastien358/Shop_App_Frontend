@@ -1,18 +1,57 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import Pagination from '@/templates/pagination/Pagination.vue'
 import { useCommandUserStore } from '@/stores/user/commandUserStore.ts'
-import { computed, onMounted } from 'vue'
 
 const commandUserStore = useCommandUserStore()
 
-const commands = computed(() => commandUserStore.command)
+const currentPage = ref<number>(1)
+const itemPerPage = ref<number>(5)
 
 onMounted(async () => {
   try {
-    await commandUserStore.getCommandUserList()
+    await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
   } catch (e) {
     console.error(e)
   }
 })
+
+const commands = computed(() => commandUserStore.command)
+
+// Pagination
+
+const previousPage = async () => {
+  try {
+    if (currentPage.value > 1) return currentPage.value--
+    await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const nextPage = async () => {
+  try {
+    if (currentPage.value < commandUserStore.pages) return currentPage.value++
+    await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const removeCommand = async (id: number) => {
+  try {
+    await commandUserStore.removeCommand(id)
+    await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
+    if (commandUserStore.command.length === 0 && currentPage.value > 1) {
+      currentPage.value--
+    }
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
+}
+
+// Couleurs des différents status de la commande
 
 const paymentStatus = (command) => {
   switch (command.status) {
@@ -29,7 +68,7 @@ const paymentStatus = (command) => {
   }
 }
 
-// Couleurs des différents status de la commande
+// Gstion des couleurs status de la préparation de la commande
 
 const selectedPreparationStatus = (command) => {
   switch (command.preparationStatus) {
@@ -44,12 +83,18 @@ const selectedPreparationStatus = (command) => {
   }
 }
 
-const removeCommand = async (id: number) => {
-  try {
-    await commandUserStore.removeCommand(id)
-  } catch (e) {
-    console.error(e)
+// Si la commande est payé, le boutton de redirection vers le formulaire paiement disparait
+
+const statusCommandPaid = (command) => {
+  if (command.status === 'Payé') {
+    return 'no-button-payment'
   }
+}
+
+const formatedDate = (date: Date) => {
+  if (!date) return ''
+  const d = new Date(date)
+  return new Intl.DateTimeFormat('fr-Fr').format(d)
 }
 </script>
 
@@ -60,8 +105,10 @@ const removeCommand = async (id: number) => {
   </section>
 
   <!-- commandes client -->
-  <div v-else-if="commandUserStore.command.length > 0" class="command-user">
+  <section v-else-if="commandUserStore.command.length > 0" class="command-user">
     <div v-for="command in commands" :key="command.id" class="command-card">
+
+
       <!-- Items de la commande -->
       <div v-for="item in command.commandItems" :key="item.id" class="command-item">
         <div class="item-image">
@@ -77,6 +124,7 @@ const removeCommand = async (id: number) => {
           <h3>{{ item.title }}</h3>
           <p>Prix : {{ item.price }} €</p>
           <p>Quantité : {{ item.quantity }}</p>
+          <p>Date : {{ formatedDate(command.createdAt) }}</p>
         </div>
       </div>
 
@@ -102,12 +150,26 @@ const removeCommand = async (id: number) => {
         <router-link
           :to="{ name: 'payment-command', params: { id: command.id } }"
           class="btn btn-command-paid"
+          :class="statusCommandPaid(command)"
           >Payé</router-link
         >
-        <button @click="removeCommand(command.id)" class="btn btn-delete">Supprimer</button>
+        <button
+          @click="removeCommand(command.id)"
+          class="btn btn-delete"
+          :class="statusCommandPaid(command)"
+        >
+          Supprimer
+        </button>
       </div>
     </div>
-  </div>
+
+    <Pagination
+      :currentPage="currentPage"
+      :pages="commandUserStore.pages"
+      @previous-page="previousPage()"
+      @next-Page="nextPage()"
+    />
+  </section>
 
   <!-- aucun produit -->
   <section v-else class="no-product">
@@ -195,7 +257,13 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+  height: calc(100vh - 96px);
+  overflow: auto;
+  @media (max-width: 767.98px) {
+    padding: 10px;
+    height: 100%;
+  }
   .command-card {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -203,7 +271,7 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     background: #f9f9f9;
     .command-item {
       display: flex;
-      gap: 1rem;
+      gap: 0.5rem;
       align-items: center;
       margin-bottom: 1rem;
       .item-image {
@@ -219,12 +287,12 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       .item-info {
         flex: 1;
         h3 {
-          font-size: 15px;
+          font-size: 14px;
           margin: 0 0 0.3rem 0;
         }
         p {
           margin: 0.2rem 0;
-          font-size: 14px;
+          font-size: 13px;
         }
       }
     }
@@ -235,6 +303,9 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   gap: 5px;
+  .no-button-payment {
+    display: none;
+  }
   .btn {
     padding: 0.6rem 1rem;
     border-radius: 6px;
@@ -255,6 +326,12 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
     &-delete {
       background: red;
+      &.no-button {
+        display: none;
+      }
+      &.active-button {
+        display: block;
+      }
     }
   }
 }

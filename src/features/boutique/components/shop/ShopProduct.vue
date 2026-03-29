@@ -38,7 +38,7 @@ const addProductToCart = async (id: number) => {
         <h3>{{ product.title }}</h3>
         <p>{{ product.description }}</p>
         <div class="d-flex align-items-center space-between">
-          <p>Prix:{{ product.price }}€</p>
+          <p>Prix : {{ product.price }}€</p>
           <button @click="addProductToCart(product.id)" class="btn btn-primary">
             Ajouter au panier
           </button>

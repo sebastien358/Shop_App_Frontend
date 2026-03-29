@@ -12,25 +12,36 @@ const productAdminStore = useProductAdminStore()
 // Récupération des catégories
 
 const categoryAdminStore = useCategoryAdminStore()
-
 const categories = computed(() => categoryAdminStore.category)
 
 onMounted(async () => {
   try {
     await categoryAdminStore.getAdminCategories()
   } catch (e) {
-    console.log(e)
+    console.error(e)
   }
 })
 
 // Création Form
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5 Mo
 
 const schema = z.object({
   title: z.string({ message: 'Le prénom est requis' }),
   price: z.coerce.number({ message: 'Veuillez renseigner un prix' }),
   category: z.coerce.number({ message: 'Veuillez renseigner une catégorie' }),
   description: z.string({ message: 'Veuillez renseigner une description' }),
-  images: z.array(z.instanceof(File)).optional(),
+  images: z
+    .array(z.instanceof(File))
+    .optional()
+    .refine(
+      (files) => {
+        if (!files) return true
+        return files.every((file) => file.size <= MAX_FILE_SIZE && ['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
+      }, {
+        message: 'Chaque fichier doit faire moins de 5Mo et être au format JPEG, PNG ou WEBP',
+      },
+    )
 })
 
 const { handleSubmit, isSubmitting } = useForm({
@@ -55,37 +66,44 @@ const changeMultipleFiles = (e: Event) => {
 
 const MESSAGES = {
   SUCCESS_ADD_PRODUCT: 'Le produit a bien été ajouté',
-  INVALID_CREDENTIALS: '',
+  INVALID_CREDENTIALS: 'Une erreur est survenue',
 }
 
 const onSubmit = handleSubmit(async (dataProduct, { resetForm }) => {
   try {
-    await productAdminStore.addAdminProduct(dataProduct)
+    const response = await productAdminStore.addAdminProduct(dataProduct)
+    if (!response) {
+      setErrorMessage(MESSAGES.INVALID_CREDENTIALS)
+      return
+    }
+    setSuccessMessage(MESSAGES.SUCCESS_ADD_PRODUCT, resetForm)
   } catch (e) {
     console.error(e)
+    setErrorMessage(MESSAGES.INVALID_CREDENTIALS)
   }
 })
 
 // Gestion des messages d'erreurs
 
-const successMessage = ref<string>('')
-const errorMessage = ref<string>('')
+const successMessage = ref<string | null>(null)
+const errorMessage = ref<string | null>(null)
 
 let reset = () => {}
 
 function setSuccessMessage(message: string, resetForm: () => void) {
+  errorMessage.value = null
   successMessage.value = message
   reset = resetForm
 }
 
 function setErrorMessage(message: string) {
+  successMessage.value = null
   errorMessage.value = message
 }
 
 function closeFields() {
-  successMessage.value = ''
-  errorMessage.value = ''
-  images.value = []
+  successMessage.value = null
+  errorMessage.value = null
 }
 
 function handleResetForm() {
@@ -188,7 +206,10 @@ const fields = [
           />
         </div>
         <div class="d-flex align-items-center mt-10 flex-end">
-          <button class="btn btn-black">Ajouter un produit</button>
+          <button class="btn btn-black" :disabled="isSubmitting">
+            <span v-if="isSubmitting">Chargement...</span>
+            <span v-else>Ajouter un produit</span>
+          </button>
         </div>
       </form>
     </div>
@@ -202,7 +223,6 @@ const fields = [
   justify-content: center;
   padding: 20px;
   height: calc(100vh - 96px);
-  padding: 20px;
   .container-form {
     max-width: 1000px;
     padding: 30px 20px 15px 20px;

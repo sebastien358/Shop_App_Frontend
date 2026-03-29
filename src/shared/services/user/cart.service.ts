@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { CartItemInterface, CartProductInterface } from '@/shared/interfaces'
 
-const BASE_URL = 'http://localhost:8000'
+const BASE_URL = import.meta.env.VITE_APP_API_URL as string
 
 export async function axiosGetProductToCart(): Promise<CartProductInterface[] | CartProductInterface> {
   try {

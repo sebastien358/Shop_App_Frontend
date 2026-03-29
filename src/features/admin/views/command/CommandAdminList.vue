@@ -16,8 +16,6 @@ onMounted(async () => {
 const commands = computed(() => commandAdminStore.commands)
 
 const paymentStatus = (command) => {
-  console.log('STATUS : ', command.status)
-
   switch (command.status) {
     case 'En attente':
       return 'status-pending'
@@ -60,7 +58,23 @@ const selectedPreparation = async (id: number, e: Event) => {
     await commandAdminStore.preparationStatus(id, preparationStatus)
   } catch (e) {
     console.error(e)
+    throw e
   }
+}
+
+const removeCommand = async (id: number) => {
+  try {
+    await commandAdminStore.removeCommand(id)
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
+}
+
+const formatedAt = (date: Date) => {
+  if (!date) return ''
+  const d = new Date(date)
+  return Intl.DateTimeFormat('fr-FR').format(d)
 }
 </script>
 
@@ -88,6 +102,7 @@ const selectedPreparation = async (id: number, e: Event) => {
           <h3>{{ item.title }}</h3>
           <p>Prix : {{ item.price }} €</p>
           <p>Quantité : {{ item.quantity }}</p>
+          <p>Date : {{ formatedAt(command.createdAt) }}</p>
         </div>
       </div>
 
@@ -105,6 +120,9 @@ const selectedPreparation = async (id: number, e: Event) => {
             {{ command.preparationStatus }}
           </span>
         </p>
+
+        <p>Client : {{ command.firstName }} {{ command.lastName }}</p>
+        <p>Adresse : {{ command.address }} {{ command.zipCode }} {{ command.city }}</p>
       </div>
 
       <!-- Bouton préparation de la commande -->
@@ -125,7 +143,12 @@ const selectedPreparation = async (id: number, e: Event) => {
       </div>
 
       <!-- Bouton supprimer commande -->
-      <button :class="commandDelivered(command) ? 'active-button' : 'no-button'">Supprimer</button>
+      <button
+        @click="removeCommand(command.id)"
+        :class="commandDelivered(command) ? 'active-button' : 'no-button'"
+      >
+        Supprimer
+      </button>
     </div>
   </section>
 
@@ -189,27 +212,22 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     color: orange;
     font-weight: bold;
   }
-
   .status-shipped {
     color: #3498db;
     font-weight: bold;
   }
-
   .status-paid {
     color: #2ecc71;
     font-weight: bold;
   }
-
   .status-delivered {
     color: #2ecc71;
     font-weight: bold;
   }
-
   .status-failed {
     color: red;
     font-weight: bold;
   }
-
   .status-cancelled {
     color: red;
     font-weight: bold;
@@ -245,12 +263,12 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       .item-info {
         flex: 1;
         h3 {
-          font-size: 14px;
-          margin: 0 0 0.3rem 0;
+          font-size: 13px;
+          margin: 0 0 0.4rem 0;
         }
         p {
-          margin: 0.3rem 0;
-          font-size: 13px;
+          margin: 0.4rem 0;
+          font-size: 12px;
         }
       }
     }

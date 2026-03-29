@@ -2,18 +2,33 @@
 import ShopProductList from '@/features/boutique/components/shop/ShopProductList.vue'
 import ShopFilter from '@/features/boutique/components/shop/ShopFilter.vue'
 import type { ProductInterface } from '@/shared/interfaces'
+import { reactive } from 'vue'
 
 defineProps<{
   products: ProductInterface[]
   isLoading: boolean
 }>()
+
+// Menu de filtration
+
+const state = reactive<{
+  isOpen: boolean
+}>({
+  isOpen: !window.matchMedia('(max-width: 767.98px)').matches,
+})
+
+const toggleFiltered = () => {
+  state.isOpen = !state.isOpen
+}
 </script>
 
 <template>
   <div class="shop">
-    <ShopFilter class="shop-filter" />
+    <Transition>
+      <ShopFilter v-if="state.isOpen" class="shop-filter" />
+    </Transition>
     <div class="d-flex flex-column shop-content">
-      <button class="btn btn-primary">Filtrer les produits</button>
+      <button @click="toggleFiltered()" class="btn btn-primary">Filtrer les produits</button>
       <ShopProductList :products="products" :isLoading="isLoading" class="shop-product-list" />
     </div>
   </div>
@@ -62,5 +77,17 @@ defineProps<{
       }
     }
   }
+}
+
+/* we will explain what these classes do next! */
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

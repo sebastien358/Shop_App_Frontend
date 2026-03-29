@@ -86,7 +86,7 @@ async function deleteItemToCart(id: number) {
   .fa-minus {
     cursor: pointer;
     font-size: 15px;
-    color: green;
+    color: red;
   }
   .quantity {
     font-size: 14px;
@@ -95,7 +95,7 @@ async function deleteItemToCart(id: number) {
   .fa-plus {
     cursor: pointer;
     font-size: 15px;
-    color: red;
+    color: green;
   }
 }
 </style>

@@ -56,7 +56,7 @@ export const useProductStore = defineStore('product', {
     },
     async loadProducts() {
       try {
-        return await this.getProduct(true)
+        await this.getProduct(true)
       } catch (e) {
         console.error(e)
       }

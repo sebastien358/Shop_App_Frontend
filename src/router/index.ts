@@ -13,7 +13,6 @@ import Finish from '@/features/user/components/command/CommandFinish.vue'
 import CommandUserList from '@/features/user/components/profile/CommandUserList.vue'
 const AccountUserEdit = () => import('@/features/user/components/profile/AccountUserEdit.vue')
 
-
 const routes = [
   { path: '/', redirect: '/boutique' },
   { path: '/boutique', component: Boutique },
@@ -30,10 +29,10 @@ const routes = [
     component: Payment,
     meta: {
       requiresUser: true,
-    },
+    }
   },
   {
-    path: '/payment/:id',
+    path: '/payment/:id?',
     name: 'payment-command',
     component: Payment,
     meta: {

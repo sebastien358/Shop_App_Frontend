@@ -22,7 +22,7 @@ import Footer from '@/templates/footer/Footer.vue'
   display: grid;
   grid-template-areas: 'header' 'views' 'footer';
   grid-template-rows: 48px 1fr 48px;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .header {

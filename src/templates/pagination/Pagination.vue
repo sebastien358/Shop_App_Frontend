@@ -1,8 +1,7 @@
 <script setup lang="ts">
-
 defineProps<{
   currentPage: number
-  totalPages: number
+  pages: number
 }>()
 
 const emit = defineEmits<{
@@ -12,12 +11,24 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="d-flex align-items-center justify-content-center pagination">
-    <button @click="emit('previousPage')" class="btn btn-pagination" :class="{'disabled': currentPage === 1}" aria-label="Page précédente">
+  <div class="pagination" :class="{'active-pagination': pages >= 1}">
+    <button
+      @click="emit('previousPage')"
+      class="btn btn-pagination"
+      :class="{ disabled: currentPage === 1 }"
+      :disabled="currentPage === 1"
+      aria-label="Page précédente"
+    >
       Précédent
     </button>
-    <span>{{ currentPage }} - {{ totalPages }}</span>
-    <button @click="emit('nextPage')" class="btn btn-pagination" :class="{'disabled': currentPage === totalPages}"  aria-label="Page suivante">
+    <span>{{ currentPage }} - {{ pages }}</span>
+    <button
+      @click="emit('nextPage')"
+      class="btn btn-pagination"
+      :class="{ disabled: currentPage === pages }"
+      :disabled="currentPage === pages"
+      aria-label="Page suivante"
+    >
       Suivant
     </button>
   </div>
@@ -25,12 +36,44 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .pagination {
-  span {
-    margin: 0 6px;
-    font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  visibility: hidden;
+  &.active-pagination {
+    visibility: visible;
   }
-  .disabled {
-  background-color: gray;
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+  }
+  .btn-pagination {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    outline: none;
+    width: 80px;
+    &:hover:not(.disabled) {
+      background-color: #0056b3;
+    }
+    &.disabled {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+    &:focus {
+      outline: 2px solid #0056b3;
+      outline-offset: 2px;
+    }
   }
 }
 </style>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { axiosAdminCommandList, axiosAdminPreparationStatus } from '@/shared/services/admin/commandAdmin.service.ts'
+import { axiosAdminCommandList, axiosAdminPreparationStatus, axiosAdminRemoveCommand } from '@/shared/services/admin/commandAdmin.service.ts'
 
 export const useCommandAdminStore = defineStore('commandAdmin', {
   state: () => ({
@@ -37,5 +37,15 @@ export const useCommandAdminStore = defineStore('commandAdmin', {
         }
       }
     },
-  },
+    async removeCommand(id: number) {
+      try {
+        const response = await axiosAdminRemoveCommand(id)
+        this.commands = this.commands.filter((c) => c.id !== id)
+        return response
+      } catch(e) {
+        console.error(e)
+        throw e
+      }
+    }
+  }
 })

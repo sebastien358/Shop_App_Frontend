@@ -10,7 +10,7 @@ export const useCategoryAdminStore = defineStore('categoryAdmin', {
       try {
         const response = await axiosGetCategoryAdmin()
         if (response) {
-          this.category = Array.isArray(response) ? response : [response]
+          this.category = Array.isArray(response) ? response : []
         } else {
           console.log('La response est nulle')
         }

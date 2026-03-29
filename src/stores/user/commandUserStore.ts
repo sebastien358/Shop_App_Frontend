@@ -1,28 +1,37 @@
 import { defineStore } from 'pinia'
-import { axiosAddCommandUser, axiosGetCommandUser, axiosGetCommandUserList, axiosGetCurrentUserId,
+import { axiosAddCommandUser, axiosGetCommandUserList, axiosGetCurrentUserId,
   axiosRemoveCommandUser
 } from '@/shared/services/user/command.service.ts'
 
 export const useCommandUserStore = defineStore('commandUser', {
   state: () => ({
-    currentCommand: [],
     currentCommandId: 0,
     command: [],
     isLoading: true,
+    total: 0,
+    pages: 0,
   }),
   actions: {
-    async getCommandUser() {
+    async getCommandUser(currentPage: number, itemPerPage: number) {
       try {
         this.isLoading = true
 
-        const response = await axiosGetCommandUser()
-        const command = Array.isArray(response) ? response : [response]
-        this.currentCommand = command
-        this.currentCommandId = this.currentCommand[0].id
+        const response = await axiosGetCommandUserList(currentPage, itemPerPage)
 
-        return command
+        const data = response || { commands: [], total: 0, pages: 0 }
+
+        this.command = data.commands
+        this.total = data.total
+        this.pages = data.pages
+
+        this.currentCommandId = data.commands.id
+
+        return data
       } catch (e) {
-        this.currentCommand = []
+        this.command = []
+        this.total = 0
+        this.pages = 0
+        this.currentCommandId = 0
         console.error(e)
       } finally {
         this.isLoading = false
@@ -31,24 +40,10 @@ export const useCommandUserStore = defineStore('commandUser', {
     async addCommandAddress(dataAddress) {
       try {
         const response = await axiosAddCommandUser(dataAddress)
-        this.command.push(response)
+        //this.command.push(response)
         return response
       } catch (e) {
         console.error(e)
-      }
-    },
-    async getCommandUserList() {
-      try {
-        this.isLoading = true
-        const response = await axiosGetCommandUserList()
-        const commands = Array.isArray(response) ? response : []
-        this.command = commands
-        return response
-      } catch (e) {
-        this.command = []
-        console.error(e)
-      } finally {
-        this.isLoading = false
       }
     },
     async getCurrentCommand(id: number) {
@@ -68,6 +63,6 @@ export const useCommandUserStore = defineStore('commandUser', {
         console.error(e)
         throw e
       }
-    }
-  }
+    },
+  },
 })

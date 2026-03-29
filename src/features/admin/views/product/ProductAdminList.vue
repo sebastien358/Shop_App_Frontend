@@ -11,44 +11,38 @@ const products = computed(() => productAdminStore.product)
 const currentPage = ref<number>(1)
 const itemPerPage = ref<number>(20)
 
-async function loadAdminProduct() {
+const loadAdminProduct = async () => {
   try {
     await productAdminStore.getAdminProducts(currentPage.value, itemPerPage.value)
-  } catch(e) {
+  } catch (e) {
     console.error(e)
   }
 }
 
-async function previousPage() {
+const previousPage = async () => {
   if (currentPage.value > 1) {
     currentPage.value--
   }
   try {
     await productAdminStore.getAdminProducts(currentPage.value, itemPerPage.value)
-  } catch(e) {
+  } catch (e) {
     console.error(e)
   }
 }
 
-async function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-  }
+const nextPage = async () => {
+  currentPage.value++
   try {
     await productAdminStore.getAdminProducts(currentPage.value, itemPerPage.value)
-  } catch(e) {
+  } catch (e) {
     console.error(e)
   }
 }
-
-const totalPages = computed(() =>
-  Math.ceil(productAdminStore.countProduct / itemPerPage.value)
-)
 
 onMounted(async () => {
   try {
     await loadAdminProduct()
-  } catch(e) {
+  } catch (e) {
     console.error(e)
   }
 })
@@ -56,9 +50,16 @@ onMounted(async () => {
 // Supression d'un produit
 
 async function deleteProduct(id: number) {
-   try {
+  try {
     await productAdminStore.deleteProduct(id)
-  } catch(e) {
+    await productAdminStore.getAdminProducts(currentPage.value, itemPerPage.value)
+
+    if (productAdminStore.product.length === 0 && currentPage.value > 1) {
+      currentPage.value--
+    }
+
+    await loadAdminProduct()
+  } catch (e) {
     console.error(e)
   }
 }
@@ -83,7 +84,12 @@ async function deleteProduct(id: number) {
         </div>
       </div>
     </div>
-    <Pagination :currentPage="currentPage" :totalPages="totalPages" @previous-page="previousPage()" @next-Page="nextPage()" />
+    <Pagination
+      :currentPage="currentPage"
+      :pages="productAdminStore.pages"
+      @previous-page="previousPage()"
+      @next-Page="nextPage()"
+    />
   </div>
 </template>
 

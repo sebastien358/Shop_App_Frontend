@@ -4,34 +4,23 @@ import AlertMessage from '@/templates/alertMessage/AlertMessage.vue'
 import { useCartStore } from '@/stores/cartStore.ts'
 import { useCommandUserStore } from '@/stores/user/commandUserStore'
 import { onMounted, reactive, ref } from 'vue'
+import { loadStripe } from '@stripe/stripe-js'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
+
+const BASE_URL = import.meta.env.VITE_APP_API_URL as string
+
 const stripe = ref(null)
 const cardStripe = ref(null)
 const cardElement = ref(null)
-import { loadStripe } from '@stripe/stripe-js'
-import axios from 'axios'
-import { useRoute } from 'vue-router'
-
-const BASE_URL = 'http://localhost:8000'
 
 // Paiment d'une commande puis le panier
 
 const cartStore = useCartStore()
 
-type CartItems = {
-  id: number
-  title: string
-  price: number
-  quantity: number
-}
-
-type Cart = {
-  id: number
-  cartItems: CartItems[]
-}
-
 const stateCart = reactive({
-  id: cartStore.cart.id || 0,
-  cartItems: cartStore.cart ? [...cartStore.cart] : [],
+  id: cartStore.cart?.id || 0,
+  cartItems: cartStore.cart?.cartItems || [],
 })
 
 // Paiment d'une commande depuis le profil user : ID
@@ -55,7 +44,7 @@ type CommandItems = {
 
 type Command = {
   id: number
-  commandItems: CommandItems
+  commandItems: CommandItems[]
 }
 
 const stateCommand = reactive<Command>({
@@ -65,20 +54,20 @@ const stateCommand = reactive<Command>({
 
 onMounted(async () => {
   try {
+    await strypePayment()
+
     const id = Number(route.params.id)
+
     if (id) {
       const command = await commandStore.getCurrentCommand(id)
       Object.assign(stateCommand, {
         id: command.id,
         commandItems: command.commandItems,
       })
-      console.log(stateCommand)
     } else {
       await cartStore.getProductToCart()
 
-      // Ici on prend directement les éléments du panier et on transforme le proxy en tableau normal
-
-      const cartItems = cartStore.cart.cartItems.map((item: any) => ({
+      const cartItems = (cartStore.cart?.cartItems || []).map((item: any) => ({
         id: item.id,
         title: item.title,
         price: item.price,
@@ -87,7 +76,7 @@ onMounted(async () => {
       }))
 
       Object.assign(stateCart, {
-        id: cartStore.cart.id || 0,
+        id: cartStore.cart?.id || 0,
         cartItems,
       })
     }
@@ -95,8 +84,6 @@ onMounted(async () => {
     console.error(e)
   }
 })
-
-// Produit et quantité à envoyer eu backend
 
 // Configuration de Strype
 
@@ -149,7 +136,7 @@ const handleSubmit = async () => {
       payload.commandId = stateCommand.id
     } else {
       // Commande depuis le panier
-      payload.items = stateCart.cartItems.map((item) => ({
+      payload.items = (stateCart.cartItems || []).map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
       }))
@@ -177,20 +164,20 @@ const handleSubmit = async () => {
 const successMessage = ref<string | null>(null)
 const errorMessage = ref<string | null>(null)
 
-function setSuccessMessage(message: string) {
+const setSuccessMessage = (message: string) => {
   successMessage.value = message
 }
 
-function setErrorMessage(message: string) {
+const setErrorMessage = (message: string) => {
   errorMessage.value = message
 }
 
-function closeAlert() {
+const closeAlert = () => {
   successMessage.value = ''
   errorMessage.value = ''
 }
 
-function handleResetForm() {
+const handleResetForm = () => {
   closeAlert()
 }
 </script>
@@ -240,8 +227,8 @@ function handleResetForm() {
 .payment {
   height: calc(100vh - 210px);
   padding: 10px;
-  @include m.lg {
-    padding: 20px;
+  @media (max-width: 768.98px) {
+    height: auto;
   }
 }
 
@@ -252,6 +239,9 @@ function handleResetForm() {
   padding: 20px;
   width: 100%;
   max-width: 520px;
+  @media (max-width: 768.98px) {
+    margin-top: 80px;
+  }
   h2 {
     font-size: 21px;
   }
