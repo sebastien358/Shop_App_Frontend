@@ -28,7 +28,7 @@ export const useCartStore = defineStore('cart', {
       try {
         const response = await axiosGetProductToCart()
         if (response) {
-          this.cart = Array.isArray(response) ? response : [response]
+          this.cart = Array.isArray(response) ? response : []
         } else {
           console.log('La response est vide')
         }

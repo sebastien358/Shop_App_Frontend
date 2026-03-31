@@ -17,10 +17,6 @@ const router = useRouter()
 
 async function addItemToCart(id: number) {
   try {
-    if (!authStore.isLoggedIn) {
-      await router.push({ path: '/login' })
-      return
-    }
     await cartStore.addItemToCart(id)
   } catch (e) {
     console.error(e)

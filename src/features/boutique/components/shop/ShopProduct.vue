@@ -17,6 +17,7 @@ const addProductToCart = async (id: number) => {
   try {
     if (!authStore.isLoggedIn) {
       await router.push({ path: '/login' })
+      return
     }
     await cartStore.addProductToCart(id)
   } catch (e) {

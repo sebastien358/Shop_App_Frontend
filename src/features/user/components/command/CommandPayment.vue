@@ -8,48 +8,26 @@ import { loadStripe } from '@stripe/stripe-js'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
+const cartStore = useCartStore()
+
+const commandStore = useCommandUserStore()
+
+const route = useRoute()
+
 const BASE_URL = import.meta.env.VITE_APP_API_URL as string
 
 const stripe = ref(null)
 const cardStripe = ref(null)
 const cardElement = ref(null)
 
-// Paiment d'une commande puis le panier
-
-const cartStore = useCartStore()
-
-const stateCart = reactive({
-  id: cartStore.cart?.id || 0,
-  cartItems: cartStore.cart?.cartItems || [],
-})
-
 // Paiment d'une commande depuis le profil user : ID
-
-const commandStore = useCommandUserStore()
-
-const route = useRoute()
-
-type Product = {
-  id: number
-  title: string
-  description: string
-}
-
-type CommandItems = {
-  id: number
-  title: string
-  quantity: number
-  product: Product
-}
 
 type Command = {
   id: number
-  commandItems: CommandItems[]
 }
 
 const stateCommand = reactive<Command>({
   id: 0,
-  commandItems: [],
 })
 
 onMounted(async () => {
@@ -66,19 +44,6 @@ onMounted(async () => {
       })
     } else {
       await cartStore.getProductToCart()
-
-      const cartItems = (cartStore.cart?.cartItems || []).map((item: any) => ({
-        id: item.id,
-        title: item.title,
-        price: item.price,
-        quantity: item.quantity,
-        product: item.product,
-      }))
-
-      Object.assign(stateCart, {
-        id: cartStore.cart?.id || 0,
-        cartItems,
-      })
     }
   } catch (e) {
     console.error(e)
@@ -136,9 +101,8 @@ const handleSubmit = async () => {
       payload.commandId = stateCommand.id
     } else {
       // Commande depuis le panier
-      payload.items = (stateCart.cartItems || []).map((item) => ({
-        productId: item.product.id,
-        quantity: item.quantity,
+      payload.items = cartStore.cart.map((item: any) => ({
+        id: item.id,
       }))
     }
 
@@ -173,8 +137,8 @@ const setErrorMessage = (message: string) => {
 }
 
 const closeAlert = () => {
-  successMessage.value = ''
-  errorMessage.value = ''
+  successMessage.value = null
+  errorMessage.value = null
 }
 
 const handleResetForm = () => {

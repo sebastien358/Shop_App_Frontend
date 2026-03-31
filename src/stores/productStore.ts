@@ -23,7 +23,13 @@ export const useProductStore = defineStore('product', {
     product: [],
     isLoading: true,
     searchTerm: '',
-    priceRange: [[0, 4000], [500, 1000], [1000, 1500], [1500, 2000], [2000, 4000]],
+    priceRange: [
+      [0, 4000],
+      [500, 1000],
+      [1000, 1500],
+      [1500, 2000],
+      [2000, 4000],
+    ],
     initPriceRange: [0, 4000],
     category: ['all', 'desktop', 'gamer', 'streaming'],
     initCategory: ['all'],
@@ -31,25 +37,26 @@ export const useProductStore = defineStore('product', {
     limit: 20,
   }),
   getters: {
-    nbrProducts: (state) => state.product.length
+    nbrProducts: (state) => state.product.length,
   },
   actions: {
     async getProduct(append = false): Promise<void> {
       try {
         this.isLoading = true
+
+        if (!append) {
+          this.offset = 0 // ← reset offset à chaque nouvelle page
+          this.product = [] // ← vide la liste
+        }
+
         const response = await axiosGetProducts(this.offset, this.limit)
         const products = Array.isArray(response) ? response : []
 
-        if (!append) {
-          this.product = products
-          this.offset = products.length
-        } else {
-          this.product.push(...products)
-          this.offset += products.length
-        }
+        this.product.push(...products)
+        this.offset += products.length
       } catch (e) {
         this.product = []
-        console.log(e)
+        console.error('Erreur getProduct:', e)
       } finally {
         this.isLoading = false
       }
@@ -57,19 +64,22 @@ export const useProductStore = defineStore('product', {
     async loadProducts() {
       try {
         await this.getProduct(true)
+        return true
       } catch (e) {
         console.error(e)
       }
     },
     async searchProducts(term: string): Promise<void> {
-      console.log(term)
       if (!term || term.trim().length === 0) {
         this.offset = 0
+        this.searchTerm = ''
       }
 
       if (term.trim().length < 2) return
+
       try {
         this.isLoading = true
+        this.searchTerm = term
 
         const response = await axiosSearchProducts(term)
         this.product = Array.isArray(response) ? response : []
@@ -82,7 +92,7 @@ export const useProductStore = defineStore('product', {
     },
     async filteredPrice(priceRange: number[]): Promise<void> {
       try {
-        const [ minPrice, maxPrice ] = priceRange
+        const [minPrice, maxPrice] = priceRange
         const response = await axiosFilteredPriceProducts(minPrice, maxPrice)
         this.product = Array.isArray(response) ? response : []
       } catch (e) {

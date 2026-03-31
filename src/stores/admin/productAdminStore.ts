@@ -17,46 +17,45 @@ export const useProductAdminStore = defineStore('productAdmin', {
   state: (): ProductAdminState => ({
     product: [],
     countProduct: 0,
-    pages: 0
+    pages: 0,
   }),
   actions: {
     async getAdminProducts(currentPage: number, itemPerPage: number): Promise<void> {
       try {
         const response = await axiosGetProductAdmin(currentPage, itemPerPage)
         if (response) {
-          const products: ProductInterface[] = response.products
+          const products = response.products
           this.product = products
           this.countProduct = response.total
           this.pages = response.pages
         } else {
-           console.log('La response est vide')
+          console.log('La response est vide')
         }
-      } catch(e) {
+      } catch (e) {
         console.error(e)
       }
     },
-    async addAdminProduct(dataProduct: ProductFormInterface): Promise<void> {
+    async addAdminProduct(dataProduct: ProductFormInterface): Promise<ProductInterface> {
       try {
         const formData = new FormData()
         formData.append('title', dataProduct.title)
-        formData.append('price', dataProduct.price)
+        formData.append('price', String(dataProduct.price)) // assure le type string
         formData.append('description', dataProduct.description)
         formData.append('category', dataProduct.category)
 
-        if (dataProduct.images && dataProduct.images.length > 0) {
-          dataProduct.images.forEach((image) => {
-            formData.append('images[]', image)
-          })
-        }
+        dataProduct.images?.forEach((image) => formData.append('images[]', image))
+
+        const response: ProductInterface = await axiosAddProductAdmin(formData)
 
         const productStore = useProductStore()
-
-        const response = await axiosAddProductAdmin(formData)
         productStore.product.push(response)
         this.product.push(response)
+
+        await productStore.getProduct()
+
         return response
-      } catch(e) {
-        console.error(e)
+      } catch (e) {
+        console.error('Erreur addAdminProduct:', e)
         throw e
       }
     },
@@ -65,10 +64,10 @@ export const useProductAdminStore = defineStore('productAdmin', {
         await axiosDeleteProductAdmin(id)
         this.product = this.product.filter((p) => p.id !== id)
         await this.getAdminProducts()
-      } catch(e) {
+      } catch (e) {
         console.error(e)
         throw e
       }
-    }
-  }
+    },
+  },
 })

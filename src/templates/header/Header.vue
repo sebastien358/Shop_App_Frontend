@@ -2,7 +2,6 @@
 import { useAuthStore } from '@/stores/authStore.ts'
 import { useRouter } from 'vue-router'
 import { onMounted, reactive } from 'vue'
-import { useCommandUserStore } from '@/stores/user/commandUserStore.ts'
 
 const authStore = useAuthStore()
 
@@ -61,15 +60,18 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header class="d-flex align-items-center space-between header">
+  <header class="header">
     <div class="d-flex align-items-center">
       <!-- Logo -->
+
       <router-link to="/boutique" class="d-flex align-items-center logo">
         <img src="@/assets/images/3030285.webp" />
-        <h1>ShopComputer</h1>
+        <h1>Dyma</h1>
       </router-link>
-      <!-- Menu -->
-      <div class="hide-menu">
+
+      <!-- Menu  Desktop -->
+
+      <section class="hide-menu">
         <ul class="d-flex align-items-center">
           <li class="mr-10">
             <router-link to="/boutique">Boutique</router-link>
@@ -80,12 +82,14 @@ onMounted(async () => {
             @mouseover="openDropdown('admin')"
             @mouseout="closeDropdown()"
           >
-            <a href="#">Admin</a>
+            <a href="#">Espace pro</a>
             <div class="dropdown-menu" :class="{ show: state.activeDropdown === 'admin' }">
               <div class="d-flex flex-column dropdown-menu-link">
                 <router-link to="/command/list">Les commandes</router-link>
-                <router-link to="/product-form">Ajouter un produit</router-link>
-                <router-link to="/product-list">Liste des produits</router-link>
+                <router-link to="/product-list">Les produits</router-link>
+                <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
+                  >Modifier mon compte</router-link
+                >
               </div>
               <div class="dropdown-divider"></div>
             </div>
@@ -96,7 +100,7 @@ onMounted(async () => {
             class="dropdown"
             @mouseover="openDropdown('user')"
             @mouseout="closeDropdown()"
-            :class="isAdmin() ? 'no-profile-user' : null"
+            :class="[isAdmin() ? 'no-profile-user' : null]"
           >
             <a href="#">Profil</a>
             <div class="dropdown-menu" :class="{ show: state.activeDropdown === 'user' }">
@@ -110,8 +114,9 @@ onMounted(async () => {
             </div>
           </li>
         </ul>
-      </div>
+      </section>
     </div>
+
     <!-- Authentification -->
     <div class="hide-menu">
       <ul class="d-flex align-items-center">
@@ -153,6 +158,7 @@ onMounted(async () => {
             <div class="d-flex flex-column dropdown-menu-link">
               <router-link to="/admin">Admin</router-link>
               <router-link to="/command/list">Les commandes</router-link>
+              <router-link to="/product/list">Les produits</router-link>
               <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
                 >Modifier mon compte</router-link
               >
@@ -166,7 +172,7 @@ onMounted(async () => {
           class="dropdown"
           @mouseover="openDropdown('user')"
           @mouseout="closeDropdown()"
-          :class="isAdmin() ? 'no-profile-user' : null"
+          :class="[isAdmin() ? 'no-profile-user' : null]"
         >
           <a href="#" class="link-profile-user">Profil</a>
           <div class="dropdown-menu" :class="{ show: (state.activeDropdown = 'user') }">
@@ -205,6 +211,11 @@ onMounted(async () => {
 .header {
   padding: 0 10px 0 5px;
   background-color: var(--primary-1);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   .logo {
     text-decoration: none;
     img {

@@ -8,12 +8,16 @@ const commandUserStore = useCommandUserStore()
 const currentPage = ref<number>(1)
 const itemPerPage = ref<number>(5)
 
-onMounted(async () => {
+const loadUserCommands = async () => {
   try {
     await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
   } catch (e) {
     console.error(e)
   }
+}
+
+onMounted(async () => {
+  await loadUserCommands()
 })
 
 const commands = computed(() => commandUserStore.command)
@@ -42,9 +46,12 @@ const removeCommand = async (id: number) => {
   try {
     await commandUserStore.removeCommand(id)
     await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
+
     if (commandUserStore.command.length === 0 && currentPage.value > 1) {
       currentPage.value--
     }
+
+    await loadUserCommands()
   } catch (e) {
     console.error(e)
     throw e
@@ -107,8 +114,6 @@ const formatedDate = (date: Date) => {
   <!-- commandes client -->
   <section v-else-if="commandUserStore.command.length > 0" class="command-user">
     <div v-for="command in commands" :key="command.id" class="command-card">
-
-
       <!-- Items de la commande -->
       <div v-for="item in command.commandItems" :key="item.id" class="command-item">
         <div class="item-image">

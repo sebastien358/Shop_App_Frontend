@@ -24,17 +24,12 @@ export const useCommandAdminStore = defineStore('commandAdmin', {
       }
     },
     async preparationStatus(id: number, preparationStatus: string) {
-      const command = this.commands.find((c) => c.id === id)
-
-      if (command) {
-        const oldStatus = command.preparationStatus
+      try {
+        const command = this.commands.find((c) => c.id === id)
         command.preparationStatus = preparationStatus
-
-        try {
-          await axiosAdminPreparationStatus(id, preparationStatus)
-        } catch (e) {
-          command.preparationStatus = oldStatus // rollback si erreur
-        }
+        await axiosAdminPreparationStatus(id, preparationStatus)
+      } catch (e) {
+        console.error(e)
       }
     },
     async removeCommand(id: number) {

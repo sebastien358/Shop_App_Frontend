@@ -40,7 +40,7 @@ export const useCommandUserStore = defineStore('commandUser', {
     async addCommandAddress(dataAddress) {
       try {
         const response = await axiosAddCommandUser(dataAddress)
-        //this.command.push(response)
+        this.command.push(response)
         return response
       } catch (e) {
         console.error(e)

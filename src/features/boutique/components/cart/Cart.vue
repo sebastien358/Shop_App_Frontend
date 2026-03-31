@@ -28,20 +28,13 @@ const toGoCommand = () => {
     router.push({ path: '/login' })
     return
   }
-
   if (props.cart.length === 0) {
     return
   }
-
   router.push({ path: '/command-address' })
 }
 
 const openCart = () => {
-  if (!authStore.isLoggedIn) {
-    router.push({ path: '/login' })
-    return
-  }
-
   state.open = true
 }
 </script>
@@ -49,7 +42,12 @@ const openCart = () => {
 <template>
   <div class="cart-fixed">
     <transition mode="out-in">
-      <div @click="openCart()" v-if="!state.open" class="toggle-cart" :class="{ active: authStore.isLoggedIn && cart.length > 0 }">
+      <div
+        @click="openCart()"
+        v-if="!state.open"
+        class="toggle-cart"
+        :class="{ active: authStore.isLoggedIn && cart.length > 0 }"
+      >
         <div class="nbr-products">
           <span>{{ authStore.isLoggedIn ? props.cart.length : 0 }}</span>
         </div>
@@ -117,12 +115,14 @@ const openCart = () => {
     }
   }
   .cart {
-    width: 480px;
+    width: 100cqmin;
+    max-width: 400px;
     padding: 15px 8px 6px 8px;
     border: var(--border);
     background-color: var(--text-primary-color);
     @media (max-width: 767.98px) {
-      width: 330px;
+      width: 100cqmin;
+      max-width: 350px;
     }
     h4 {
       margin-bottom: 10px;
