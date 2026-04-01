@@ -16,17 +16,15 @@ const loadUserCommands = async () => {
   }
 }
 
-onMounted(async () => {
-  await loadUserCommands()
-})
-
 const commands = computed(() => commandUserStore.command)
 
 // Pagination
 
 const previousPage = async () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
   try {
-    if (currentPage.value > 1) return currentPage.value--
     await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
   } catch (e) {
     console.error(e)
@@ -34,8 +32,8 @@ const previousPage = async () => {
 }
 
 const nextPage = async () => {
+  currentPage.value++
   try {
-    if (currentPage.value < commandUserStore.pages) return currentPage.value++
     await commandUserStore.getCommandUser(currentPage.value, itemPerPage.value)
   } catch (e) {
     console.error(e)
@@ -103,6 +101,10 @@ const formatedDate = (date: Date) => {
   const d = new Date(date)
   return new Intl.DateTimeFormat('fr-Fr').format(d)
 }
+
+onMounted(async () => {
+  await loadUserCommands()
+})
 </script>
 
 <template>
@@ -280,14 +282,8 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       align-items: center;
       margin-bottom: 1rem;
       .item-image {
-        width: 80px;
-        height: 80px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 6px;
-        }
+        width: 75px;
+        height: 75px;
       }
       .item-info {
         flex: 1;

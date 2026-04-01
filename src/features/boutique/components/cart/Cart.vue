@@ -116,7 +116,7 @@ const openCart = () => {
   }
   .cart {
     width: 100cqmin;
-    max-width: 400px;
+    max-width: 500px;
     padding: 15px 8px 6px 8px;
     border: var(--border);
     background-color: var(--text-primary-color);

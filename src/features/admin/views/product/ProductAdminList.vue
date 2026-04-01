@@ -49,7 +49,7 @@ onMounted(async () => {
 
 // Supression d'un produit
 
-async function deleteProduct(id: number) {
+const deleteProduct = async (id: number) => {
   try {
     await productAdminStore.deleteProduct(id)
     await productAdminStore.getAdminProducts(currentPage.value, itemPerPage.value)
@@ -79,7 +79,7 @@ async function deleteProduct(id: number) {
           <h4>{{ product.title }}</h4>
         </div>
         <div class="d-flex align-items-center">
-          <button class="btn btn-success">Modifier</button>
+          <router-link :to="{ name: 'product-edit', params: { id: product.id } }" class="btn btn-success">Modifier</router-link>
           <button @click="deleteProduct(product.id)" class="btn btn-danger">Supprimer</button>
         </div>
       </div>

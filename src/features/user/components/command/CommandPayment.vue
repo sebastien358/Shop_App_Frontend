@@ -32,7 +32,9 @@ const stateCommand = reactive<Command>({
 
 onMounted(async () => {
   try {
-    await strypePayment()
+    //await strypePayment()
+
+    // Commande depuis le profil user
 
     const id = Number(route.params.id)
 
@@ -43,6 +45,7 @@ onMounted(async () => {
         commandItems: command.commandItems,
       })
     } else {
+      // Commande depuis le panier
       await cartStore.getProductToCart()
     }
   } catch (e) {
