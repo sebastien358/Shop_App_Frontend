@@ -97,7 +97,7 @@ const fields = [
         </div>
         <!-- Gestion messages de la validations -->
         <div class="text-center">
-          <AlertMessage v-if="successMessage" :message="successMessage" type="success" redirectTo="/boutique" @close="handleResetForm()" class="alert-message" />
+          <AlertMessage v-if="successMessage" :message="successMessage" type="success" redirectTo="/" @close="handleResetForm()" class="alert-message" />
           <AlertMessage v-if="errorMessage" :message="errorMessage" type="error" redirectTo="" @close="closeAlert()" class="alert-message" />
         </div>
         <div class="d-flex align-items-center space-between container-button">

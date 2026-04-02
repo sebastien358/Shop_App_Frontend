@@ -19,7 +19,9 @@ let timeoutId
 const alertMessage = () => {
   if (props.type === 'success') {
     timeoutId = setTimeout(() => {
-      router.push({path: props.redirectTo})
+      if (props.redirectTo) {
+        router.push({ path: props.redirectTo })
+      }
       emit('close')
     }, 2000)
   } else {

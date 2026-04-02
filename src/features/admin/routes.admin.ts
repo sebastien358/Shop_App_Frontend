@@ -23,7 +23,7 @@ export const ADMIN_ROUTES: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/product-edit/:id',
+    path: '/product-edit/:id?',
     name: 'product-edit',
     component: ProductAdminForm,
     meta: {

@@ -74,7 +74,7 @@ onMounted(async () => {
       <section class="hide-menu">
         <ul class="d-flex align-items-center">
           <li class="mr-10">
-            <router-link to="/boutique">Boutique</router-link>
+            <router-link to="/">Boutique</router-link>
           </li>
           <li
             v-if="isAdmin()"
@@ -87,6 +87,7 @@ onMounted(async () => {
               <div class="d-flex flex-column dropdown-menu-link">
                 <router-link to="/command/list">Les commandes</router-link>
                 <router-link to="/product-list">Les produits</router-link>
+                <router-link to="/product-form">Ajouter un Produit</router-link>
                 <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
                   >Modifier mon compte</router-link
                 >
@@ -145,7 +146,7 @@ onMounted(async () => {
       />
       <ul v-if="state.openMenuMobile" class="tablet-menu">
         <li>
-          <router-link to="/boutique">Boutique</router-link>
+          <router-link to="/">Boutique</router-link>
         </li>
         <li
           v-if="isAdmin()"
@@ -158,6 +159,7 @@ onMounted(async () => {
             <div class="d-flex flex-column dropdown-menu-link">
               <router-link to="/admin">Admin</router-link>
               <router-link to="/command/list">Les commandes</router-link>
+              <router-link to="/product-form">Ajout Produit</router-link>
               <router-link to="/product/list">Les produits</router-link>
               <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
                 >Modifier mon compte</router-link

@@ -14,8 +14,7 @@ import CommandUserList from '@/features/user/components/profile/CommandUserList.
 const AccountUserEdit = () => import('@/features/user/components/profile/AccountUserEdit.vue')
 
 const routes = [
-  { path: '/', redirect: '/boutique' },
-  { path: '/boutique', component: Boutique },
+  { path: '/', component: Boutique },
   { path: '/register', name: 'register', component: Register },
   { path: '/login', name: 'login', component: Login },
   { path: '/request-password', component: RequestPassword },

@@ -70,16 +70,24 @@ const deleteProduct = async (id: number) => {
     <div v-for="product in products" :key="product.id">
       <div class="d-flex align-items-center space-between product_list">
         <div class="d-flex align-items-center">
-          <div v-if="product.pictures.length > 0">
-            <img :src="product.pictures[0].filename" class="img-product" />
-          </div>
-          <div v-else>
-            <img src="@/assets/images/not-found.webp" class="img-no-product" />
-          </div>
+
+          <img
+            v-if="product.pictures && product.pictures.length > 0"
+            :src="product.pictures[0].filename"
+            class="img-product"
+          />
+
+
+          <img v-else src="@/assets/images/not-found.webp" class="img-no-product" />
+
           <h4>{{ product.title }}</h4>
         </div>
         <div class="d-flex align-items-center">
-          <router-link :to="{ name: 'product-edit', params: { id: product.id } }" class="btn btn-success">Modifier</router-link>
+          <router-link
+            :to="{ name: 'product-edit', params: { id: product.id } }"
+            class="btn btn-success"
+            >Modifier</router-link
+          >
           <button @click="deleteProduct(product.id)" class="btn btn-danger">Supprimer</button>
         </div>
       </div>

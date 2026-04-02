@@ -78,28 +78,20 @@ const loadProducts = async () => {
 
 .shop-list {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   align-items: stretch;
   gap: 10px;
-  @include m.sm {
+  @media (max-width: 1600px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 991.98px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 768.98px) {
     grid-template-columns: repeat(1, 1fr);
     gap: 10px;
-  }
-  @include m.md {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  @include m.lg {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  @include m.xl {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 13px;
-  }
-  @include m.xxl {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
   }
 }
 

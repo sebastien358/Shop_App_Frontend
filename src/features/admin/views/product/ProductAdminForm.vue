@@ -16,6 +16,10 @@ const categoryAdminStore = useCategoryAdminStore()
 
 const categories = computed(() => categoryAdminStore.category)
 
+onMounted(async () => {
+  await categoryAdminStore.getAdminCategories()
+})
+
 const route = useRoute()
 
 type Pictures = {
@@ -64,9 +68,6 @@ onMounted(async () => {
       description: product.description,
       category: product.category.id,
     })
-
-    // Récupération des catégories
-    await categoryAdminStore.getAdminCategories()
   } catch (e) {
     console.error(e)
   }
@@ -296,7 +297,9 @@ const fields = [
         <img v-if="picture.filename" :src="picture.filename" class="img-product" />
         <img v-else src="@/assets/images/not-found.webp" class="img-product" />
         <div class="product-image__button">
-          <button @click="deleteImage(stateProduct.id, picture.id)" class="btn btn-danger">delete</button>
+          <button @click="deleteImage(stateProduct.id, picture.id)" class="btn btn-danger">
+            delete
+          </button>
         </div>
       </div>
     </section>
