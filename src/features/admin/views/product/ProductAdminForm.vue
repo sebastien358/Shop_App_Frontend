@@ -85,14 +85,9 @@ const schema = z.object({
   images: z
     .array(z.instanceof(File))
     .optional()
-    .refine(
-      (files) => {
+    .refine((files) => {
         if (!files) return true
-        return files.every(
-          (file) =>
-            file.size <= MAX_FILE_SIZE &&
-            ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
-        )
+        return files.every((file) => file.size <= MAX_FILE_SIZE && ['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
       },
       {
         message: 'Chaque fichier doit faire moins de 5Mo et être au format JPEG, PNG ou WEBP',
@@ -226,11 +221,11 @@ const fields = [
 </script>
 
 <template>
-  <main class="product-form">
+  <main class="container">
     <section class="container-form">
       <h3>Ajouter un produit</h3>
       <!-- Form Add Product -->
-      <form @submit.prevent="onSubmit">
+      <form @submit.prevent="onSubmit" class="product-form">
         <div class="input-column">
           <div v-for="(field, index) in fields" :key="index">
             <div class="d-flex flex-column form-group">
@@ -283,7 +278,7 @@ const fields = [
             class="alert-message"
           />
         </div>
-        <div class="d-flex align-items-center mt-10 flex-end">
+        <div class="product-form__button">
           <button class="btn btn-black" :disabled="isSubmitting">
             <span v-if="isSubmitting">Chargement...</span>
             <span v-else>Ajouter un produit</span>
@@ -307,7 +302,7 @@ const fields = [
 </template>
 
 <style scoped lang="scss">
-.product-form {
+.container {
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -315,12 +310,18 @@ const fields = [
   gap: 20px;
   padding: 20px;
   height: calc(100vh - 96px);
+  @media (max-width: 768.98px) {
+    padding: 10px;
+  }
   .container-form {
     max-width: 1000px;
     padding: 30px 20px 15px 20px;
     h3 {
       font-size: 20px;
       margin-bottom: 5px;
+      @media (max-width: 768.98px) {
+        text-align: center;
+      }
     }
     .alert-message {
       margin-top: 10px;
@@ -333,6 +334,9 @@ const fields = [
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   column-gap: 18px;
+  @media (max-width: 768.98px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .form-group {
@@ -377,6 +381,22 @@ const fields = [
   }
   .message-field {
     color: var(--success-2);
+  }
+}
+
+.product-form__button {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  @media (max-width: 768.98px) {
+    justify-content: center;
+  }
+  .btn-black {
+    font-size: 14px;
+    @media (max-width: 768.98px) {
+      font-size: 12px;
+    }
   }
 }
 

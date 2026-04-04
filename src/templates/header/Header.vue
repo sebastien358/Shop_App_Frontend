@@ -30,7 +30,6 @@ const toggleMenuMobile = () => {
   state.open = !state.open
 }
 
-
 // Gestion de connexion
 
 const isLoggedIn = () => {
@@ -79,25 +78,40 @@ onMounted(async () => {
           <router-link to="/">Boutique</router-link>
         </div>
         <!-- admin -->
-        <div v-if="isAdmin()" class="dropdown" @mouseover="openDropdown('admin')" @mouseout="closeDropdown()">
+        <div
+          v-if="isAdmin()"
+          class="dropdown"
+          @mouseover="openDropdown('admin')"
+          @mouseout="closeDropdown()"
+        >
           <a href="#">Espace pro</a>
           <div class="dropdown__menu" :class="{ show: state.activeDropdown === 'admin' }">
             <div class="dropdown__menu__link">
               <router-link to="/command/list">Les commandes</router-link>
               <router-link to="/product-list">Les produits</router-link>
               <router-link to="/product-form">Ajouter un Produit</router-link>
-              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
+              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
+                >Modifier mon compte</router-link
+              >
             </div>
             <div class="dropdown-divider"></div>
           </div>
         </div>
         <!-- user -->
-        <div v-if="isUser()" class="dropdown" @mouseover="openDropdown('user')" @mouseout="closeDropdown()" :class="[ isAdmin() ? 'no-profile-user' : null ]">
+        <div
+          v-if="isUser()"
+          class="dropdown"
+          @mouseover="openDropdown('user')"
+          @mouseout="closeDropdown()"
+          :class="[isAdmin() ? 'no-profile-user' : null]"
+        >
           <a href="#">Profil</a>
           <div class="dropdown__menu" :class="{ show: state.activeDropdown === 'user' }">
             <div class="dropdown__menu__link">
               <router-link to="/command/user/list">Mes commandes</router-link>
-              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
+              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
+                >Modifier mon compte</router-link
+              >
             </div>
             <div class="dropdown-divider"></div>
           </div>
@@ -125,46 +139,47 @@ onMounted(async () => {
   <!-- MENU TABLET -->
 
   <header class="tablet">
-    <Calc :open="state.open" @close="state.open = false" :transparent="true" />
-
+    <!-- Logo -->
     <router-link to="/" class="tablet__logo">
       <img src="@/assets/images/3030285.webp" />
       <h1>Dyma</h1>
     </router-link>
-
     <font-awesome-icon @click="toggleMenuMobile()" icon="fa-solid fa-bars" />
-
     <div v-if="state.open" class="tablet__menu">
       <div>
         <router-link to="/">Boutique</router-link>
       </div>
-
+      <!-- admin -->
       <section v-if="isAdmin()" class="dropdown-tablet">
-
-          <div class="dropdown-tablet__menu" :class="{ show: state.activeDropdown === 'admin' }">
-            <div class="dropdown-tablet__menu__link">
-              <router-link to="/command/list">Les commandes</router-link>
-              <router-link to="/product-list">Les produits</router-link>
-              <router-link to="/product-form">Ajouter un Produit</router-link>
-              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
-            </div>
-            <div class="dropdown-divider"></div>
+        <div class="dropdown-tablet__menu" :class="{ show: state.activeDropdown === 'admin' }">
+          <div class="dropdown-tablet__menu__link">
+            <router-link to="/command/list">Les commandes</router-link>
+            <router-link to="/product-list">Les produits</router-link>
+            <router-link to="/product-form">Ajouter un Produit</router-link>
+            <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
+              >Modifier mon compte</router-link
+            >
           </div>
-
+          <div class="dropdown-divider"></div>
+        </div>
       </section>
-
-      <section v-if="isUser()" class="dropdown-tablet" :class="[ isAdmin() ? 'no-profile-user' : true ]">
-
-          <div class="dropdown-tablet__menu">
-            <div class="dropdown-tablet__menu__link">
-              <router-link to="/command/user/list">Mes commandes</router-link>
-              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
-            </div>
-            <div class="dropdown-divider"></div>
+      <!-- user -->
+      <section
+        v-if="isUser()"
+        class="dropdown-tablet"
+        :class="[isAdmin() ? 'no-profile-user' : true]"
+      >
+        <div class="dropdown-tablet__menu">
+          <div class="dropdown-tablet__menu__link">
+            <router-link to="/command/user/list">Mes commandes</router-link>
+            <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
+              >Modifier mon compte</router-link
+            >
           </div>
-
+          <div class="dropdown-divider"></div>
+        </div>
       </section>
-
+      <!-- Authentification -->
       <section v-if="!isLoggedIn()">
         <div>
           <router-link :to="{ path: '/register' }">Inscription</router-link>
@@ -180,6 +195,8 @@ onMounted(async () => {
       </section>
     </div>
   </header>
+  <!-- Calc -->
+  <Calc :open="state.open" @close="state.open = false" :transparent="true" />
 </template>
 
 <style scoped lang="scss">
@@ -245,7 +262,9 @@ a {
   }
   &__menu {
     position: absolute;
-    box-shadow: var(--gray-2) 0px 6px 12px -2px, var(--gray-2) 0px 3px 7px -3px;
+    box-shadow:
+      var(--gray-2) 0px 6px 12px -2px,
+      var(--gray-2) 0px 3px 7px -3px;
     padding: 10px 12px;
     background-color: var(--text-primary-color);
     top: 35px;
@@ -349,7 +368,9 @@ a {
   }
   &__menu {
     position: absolute;
-    box-shadow: var(--gray-2) 0px 6px 12px -2px, var(--gray-2) 0px 3px 7px -3px;
+    box-shadow:
+      var(--gray-2) 0px 6px 12px -2px,
+      var(--gray-2) 0px 3px 7px -3px;
     padding: 10px 12px;
     background-color: var(--text-primary-color);
     transition: all 500ms ease;
@@ -376,5 +397,4 @@ a {
     margin-top: 10px;
   }
 }
-
 </style>

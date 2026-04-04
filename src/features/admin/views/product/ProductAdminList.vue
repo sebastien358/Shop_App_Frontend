@@ -39,14 +39,6 @@ const nextPage = async () => {
   }
 }
 
-onMounted(async () => {
-  try {
-    await loadAdminProduct()
-  } catch (e) {
-    console.error(e)
-  }
-})
-
 // Supression d'un produit
 
 const deleteProduct = async (id: number) => {
@@ -63,6 +55,14 @@ const deleteProduct = async (id: number) => {
     console.error(e)
   }
 }
+
+onMounted(async () => {
+  try {
+    await loadAdminProduct()
+  } catch (e) {
+    console.error(e)
+  }
+})
 </script>
 
 <template>

@@ -46,7 +46,8 @@ const { value: firstName, errorMessage: errorFirstName } = useField('firstName')
 const { value: lastName, errorMessage: errorLastName } = useField('lastName')
 const { value: address, errorMessage: errorAddress } = useField('address')
 const { value: zipCode, errorMessage: errorZipCode } = useField('zipCode')
-const { value: addressComplement, errorMessage: errorAddressComplement } = useField('addressComplement')
+const { value: addressComplement, errorMessage: errorAddressComplement } =
+  useField('addressComplement')
 const { value: city, errorMessage: errorCity } = useField('city')
 const { value: phoneNumber, errorMessage: errorPhoneNumber } = useField('phoneNumber')
 const { value: country, errorMessage: errorCountry } = useField('country')
@@ -179,7 +180,7 @@ const fields = [
   <!-- Command progress -->
   <CommandProgress :currentStep="currentStep" />
   <!-- Form address command -->
-  <section class="d-flex align-items-center justify-content-center address">
+  <section class="address">
     <div class="container-form">
       <h2>Entrer vos données</h2>
       <form @submit.prevent="onSubmit">
@@ -207,13 +208,14 @@ const fields = [
           </div>
         </div>
         <!-- Alert message -->
-        <div class="text-center alert-message">
+        <div class="text-center">
           <AlertMessage
             v-if="successMessage"
             :message="successMessage"
             type="success"
             redirectTo="/payment"
             @close="handleResetForm()"
+            class="alert"
           />
           <AlertMessage
             v-if="errorMessage"
@@ -221,6 +223,7 @@ const fields = [
             type="error"
             :redirectTo="null"
             @close="closeAlert()"
+            class="alert"
           />
         </div>
         <!-- Button valdation form -->
@@ -255,6 +258,9 @@ const fields = [
   padding: 10px 10px 20px 10px;
   overflow-y: auto;
   margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   @include m.lg {
     margin-top: 60px;
     padding: 20px;
@@ -282,6 +288,9 @@ const fields = [
       }
     }
     .btn-black {
+      margin-top: 10px;
+    }
+    .alert {
       margin-top: 10px;
     }
   }

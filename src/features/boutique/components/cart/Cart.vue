@@ -122,7 +122,7 @@ const openCart = () => {
     background-color: var(--text-primary-color);
     @media (max-width: 767.98px) {
       width: 100cqmin;
-      max-width: 350px;
+      max-width: 320px;
     }
     h4 {
       margin-bottom: 10px;

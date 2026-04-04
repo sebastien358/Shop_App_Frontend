@@ -55,9 +55,9 @@ const statusPreparation = ref<string | null>(null)
 
 const selectedPreparation = async (id: number, e: Event) => {
   try {
-    const preparationStatus = e?.target?.value
-    statusPreparation.value = preparationStatus
-    await commandAdminStore.preparationStatus(id, preparationStatus)
+    const preparation = (e.target as HTMLInputElement).value
+    statusPreparation.value = preparation
+    await commandAdminStore.preparationStatus(id, statusPreparation.value)
   } catch (e) {
     console.error(e)
     throw e
@@ -137,14 +137,8 @@ const formatedAt = (date: Date) => {
       <!-- Bouton préparation de la commande -->
 
       <div class="command-user__preparation__status">
-        <select
-          @click="selectedPreparation(command.id, $event)"
-          name="preparation-status"
-          id="preparation-status"
-        >
-          <option value="">
-            -- {{ statusPreparation ? statusPreparation : 'Status de la commande' }} --
-          </option>
+        <select @click="selectedPreparation(command.id, $event)" name="preparation-status" id="preparation-status">
+          <option value="">{{ statusPreparation ? statusPreparation : ' - Status de la commande - ' }}</option>
           <option value="Annulée">Annulée</option>
           <option value="En cours">En cours</option>
           <option value="Expédié">Expédié</option>
@@ -168,7 +162,6 @@ const formatedAt = (date: Date) => {
     <p>Aucun produit pour le moment.</p>
   </section>
 </template>
->
 
 <style scoped lang="scss">
 // Variables globales
