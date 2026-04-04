@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   currentPage: number
   pages: number
 }>()
@@ -11,22 +11,22 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="pagination" :class="{'active-pagination': pages >= 1}">
+  <div class="pagination" :class="{'active-pagination': props.pages >= 1}">
     <button
       @click="emit('previousPage')"
       class="btn btn-pagination"
-      :class="{ disabled: currentPage === 1 }"
-      :disabled="currentPage === 1"
+      :class="{ disabled: props.currentPage === 1 }"
+      :disabled="props.currentPage === 1"
       aria-label="Page précédente"
     >
       Précédent
     </button>
-    <span>{{ currentPage }} - {{ pages }}</span>
+    <span>{{ props.currentPage }} - {{ props.pages }}</span>
     <button
       @click="emit('nextPage')"
       class="btn btn-pagination"
-      :class="{ disabled: currentPage === pages }"
-      :disabled="currentPage === pages"
+      :class="{ disabled: props.currentPage === props.pages }"
+      :disabled="props.currentPage === props.pages"
       aria-label="Page suivante"
     >
       Suivant

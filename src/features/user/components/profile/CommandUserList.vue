@@ -88,7 +88,7 @@ const selectedPreparationStatus = (command) => {
   }
 }
 
-// Si la commande est payé, le boutton de redirection vers le formulaire paiement disparait
+// Si la commande est payé, le boutton de redirection vers le formulaire de paiement disparait
 
 const statusCommandPaid = (command) => {
   if (command.status === 'Payé') {
@@ -96,8 +96,10 @@ const statusCommandPaid = (command) => {
   }
 }
 
+// Récupération de la date
+
 const formatedDate = (date: Date) => {
-  if (!date) return ''
+  if (!date) return ""
   const d = new Date(date)
   return new Intl.DateTimeFormat('fr-Fr').format(d)
 }
@@ -149,7 +151,6 @@ onMounted(async () => {
             {{ command.status }}
           </span>
         </p>
-
         <p>
           Préparation commande :
           <span :class="selectedPreparationStatus(command)">

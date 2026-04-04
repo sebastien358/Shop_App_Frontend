@@ -90,7 +90,7 @@ const handleSubmit = async () => {
       return
     }
 
-    // 🔹 Condition selon le type de commande
+    // ✅ Condition selon le type de commande
     let payload: any = { token: token.id }
 
     if (stateCommand.id) {
@@ -98,8 +98,8 @@ const handleSubmit = async () => {
       payload.commandId = stateCommand.id
     } else {
       // Commande depuis le panier
-      payload.items = cartStore.cart.map((item: any) => ({
-        id: item.id,
+      payload.cartItems = cartStore.cart.map((item) => ({
+        ...item
       }))
     }
 

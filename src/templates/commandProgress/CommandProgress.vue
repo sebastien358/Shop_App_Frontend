@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   currentStep: number
 }>()
 
@@ -7,25 +7,17 @@ const steps = [
   { label: 'Connexion', num: 1 },
   { label: 'Adresse', num: 2 },
   { label: 'Paiement', num: 3 },
-  { label: "C'est fait !", num: 4 },
+  { label: 'C\'est fait !', num: 4 }
 ]
 </script>
 
 <template>
   <section class="command-progress">
-    <div
-      v-for="(step, index) in steps"
-      :key="index"
-      class="{ 'is-login-user': step.num <= currentStep }"
-    >
+    <div v-for="(step, index) in steps" :key="index" :class="{ 'step-active': step.num <= props.currentStep }">
       <div class="command-progress__step">
-        <div
-          v-if="index > 0"
-          class="separator"
-          :class="{ 'separator-is-login-user': step.num <= currentStep }"
-        ></div>
+        <div v-if="index > 0" class="separator" :class="{ 'step-active': step.num <= props.currentStep }"></div>
         <div class="#">
-          <div class="step" :class="{ 'step-is-login-user': step.num <= currentStep }">
+          <div class="command-progress__label" :class="{ 'step-active': step.num <= props.currentStep }">
             {{ step.num }}
           </div>
           <span>
@@ -48,40 +40,40 @@ const steps = [
   &__step {
     display: flex;
     align-items: center;
-    .separator {
-      border: 1px dashed var(--gray-3);
-      width: 100px;
-      margin-right: 5px;
-      margin-left: 5px;
-      position: relative;
-      bottom: 5px;
-      &.separator-is-login-user {
-        border: 1px solid var(--success-2);
-      }
+  }
+  &__step .separator {
+    border: 1px dashed var(--gray-3);
+    width: 100px;
+    margin-right: 5px;
+    margin-left: 5px;
+    position: relative;
+    bottom: 5px;
+    &.step-active {
+      border: 1px solid var(--success-2);
     }
-    .step {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: var(--border);
-      border-radius: 50%;
-      height: 55px;
-      width: 55px;
-      font-size: 12px;
-      color: var(--gray-3);
-      background-color: var(--text-primary-color);
-      &.step-is-login-user {
-        background-color: #38ada9;
-        color: var(--text-primary-color);
-        font-weight: bold;
-      }
+  }
+  &__label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: var(--border);
+    border-radius: 50%;
+    height: 55px;
+    width: 55px;
+    font-size: 12px;
+    color: var(--gray-3);
+    background-color: var(--text-primary-color);
+    &.step-active {
+      background-color: #38ada9;
+      color: var(--text-primary-color);
+      font-weight: bold;
     }
-    span {
-      font-size: 12px;
-      color: var(--gray-3);
-      position: relative;
-      top: 10px;
-    }
+  }
+  span {
+    font-size: 12px;
+    color: var(--gray-3);
+    position: relative;
+    top: 10px;
   }
 }
 
@@ -92,7 +84,7 @@ const steps = [
       margin-right: 3px;
       margin-left: 3px;
     }
-    .step {
+    .step-active {
       font-size: 12px;
     }
   }

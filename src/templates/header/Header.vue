@@ -103,7 +103,7 @@ onMounted(async () => {
           class="dropdown"
           @mouseover="openDropdown('user')"
           @mouseout="closeDropdown()"
-          :class="[isAdmin() ? 'no-profile-user' : null]"
+          :class="[ isAdmin() ? 'no-profile-user' : null ]"
         >
           <a href="#">Profil</a>
           <div class="dropdown__menu" :class="{ show: state.activeDropdown === 'user' }">
@@ -167,7 +167,7 @@ onMounted(async () => {
       <section
         v-if="isUser()"
         class="dropdown-tablet"
-        :class="[isAdmin() ? 'no-profile-user' : true]"
+        :class="[ isAdmin() ? 'no-profile-user' : null ]"
       >
         <div class="dropdown-tablet__menu">
           <div class="dropdown-tablet__menu__link">
@@ -233,6 +233,7 @@ a {
   &__logo {
     display: flex;
     align-items: center;
+    text-decoration: none;
     img {
       height: 28px;
       width: auto;
@@ -318,6 +319,7 @@ a {
   &__logo {
     display: flex;
     align-items: center;
+    text-decoration: none;
     img {
       height: 28px;
       width: auto;

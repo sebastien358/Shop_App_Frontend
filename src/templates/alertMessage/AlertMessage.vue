@@ -41,7 +41,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="props.message" :class="props.type === 'success' ? 'alert-success' : 'alert-error'">
+  <div v-if="props.message" :class="[ props.type === 'success' ? 'alert-success' : 'alert-error' ]">
     {{ message }}
   </div>
 </template>

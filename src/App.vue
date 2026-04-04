@@ -7,11 +7,11 @@ import Footer from '@/templates/footer/Footer.vue'
   <div class="app-content">
     <Header class="header" />
     <div class="views">
-    <router-view v-slot="{Component}">
-      <template v-if="Component">
-        <Component :is="Component" />
-      </template>
-    </router-view>
+      <router-view v-slot="{ Component }">
+        <template v-if="Component">
+          <Component :is="Component" />
+        </template>
+      </router-view>
     </div>
     <Footer class="footer" />
   </div>
@@ -23,18 +23,15 @@ import Footer from '@/templates/footer/Footer.vue'
   grid-template-areas: 'header' 'views' 'footer';
   grid-template-rows: 48px 1fr 48px;
   min-height: 100dvh;
-}
-
-.header {
-  grid-area: header;
-}
-
-.views {
-  grid-area: views;
-  min-height: 100%;
-}
-
-.footer {
-  grid-area: footer;
+  .header {
+    grid-area: header;
+  }
+  .views {
+    grid-area: views;
+    min-height: 100%;
+  }
+  .footer {
+    grid-area: footer;
+  }
 }
 </style>
