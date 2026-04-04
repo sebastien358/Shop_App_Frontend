@@ -68,21 +68,19 @@ const deleteProduct = async (id: number) => {
 <template>
   <div v-if="products.length && products.length > 0" class="product">
     <div v-for="product in products" :key="product.id">
-      <div class="d-flex align-items-center space-between product_list">
+      <div class="product__list">
         <div class="d-flex align-items-center">
-
           <img
             v-if="product.pictures && product.pictures.length > 0"
             :src="product.pictures[0].filename"
             class="img-product"
           />
 
-
           <img v-else src="@/assets/images/not-found.webp" class="img-no-product" />
 
           <h4>{{ product.title }}</h4>
         </div>
-        <div class="d-flex align-items-center">
+        <div class="product__buttons">
           <router-link
             :to="{ name: 'product-edit', params: { id: product.id } }"
             class="btn btn-success"
@@ -109,23 +107,57 @@ const deleteProduct = async (id: number) => {
   display: flex;
   flex-direction: column;
   row-gap: 10px;
-  &_list {
+  @media (max-width: 768.98px) {
+    padding: 10px;
+    row-gap: 6px;
+  }
+  &__list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border: var(--border);
     padding: 10px;
     background-color: var(--text-primary-color);
-    button {
-      margin: 0 3px;
-      width: 78px;
-    }
     .img-product {
       height: 55px;
       width: 65px;
       margin-right: 10px;
+      @media (max-width: 768.98px) {
+        margin-right: 10px;
+      }
     }
     .img-no-product {
       height: 55px;
       width: 65px;
       margin-right: 15px;
+      @media (max-width: 768.98px) {
+        margin-right: 10px;
+      }
+    }
+    h4 {
+      font-size: 15px;
+      @media (max-width: 768.98px) {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+.product__buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  .btn-danger,
+  .btn-success {
+    border: 0;
+    width: 75px;
+    text-align: center;
+    font-size: 11px;
+    padding: 12px 0;
+    @media (max-width: 768.98px) {
+      padding: 11px 0;
+      font-size: 10px;
+      width: 65px;
     }
   }
 }

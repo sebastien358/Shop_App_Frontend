@@ -115,16 +115,22 @@ onMounted(async () => {
 
   <!-- commandes client -->
   <section v-else-if="commandUserStore.command.length > 0" class="command-user">
-    <div v-for="command in commands" :key="command.id" class="command-card">
+    <div v-for="command in commands" :key="command.id" class="command-user__card">
       <!-- Items de la commande -->
-      <div v-for="item in command.commandItems" :key="item.id" class="command-item">
-        <div class="item-image">
+      <div v-for="item in command.commandItems" :key="item.id" class="command-user__item">
+        <div class="command-user__image">
           <img
             v-if="item.product.pictures.length"
             :src="item.product.pictures[0].filename"
+            class="product-image"
             alt="Produit"
           />
-          <img v-else src="@/assets/images/not-found.webp" alt="Produit manquant" />
+          <img
+            v-else
+            src="@/assets/images/not-found.webp"
+            class="product-image"
+            alt="Produit manquant"
+          />
         </div>
 
         <div class="item-info">
@@ -145,7 +151,7 @@ onMounted(async () => {
         </p>
 
         <p>
-          Préparation de la commande :
+          Préparation commande :
           <span :class="selectedPreparationStatus(command)">
             {{ command.preparationStatus }}
           </span>
@@ -271,67 +277,68 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     padding: 10px;
     height: 100%;
   }
-  .command-card {
+  &__card {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 1rem;
     background: #f9f9f9;
-    .command-item {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      margin-bottom: 1rem;
-      .item-image {
-        width: 75px;
-        height: 75px;
-      }
-      .item-info {
-        flex: 1;
-        h3 {
-          font-size: 14px;
-          margin: 0 0 0.3rem 0;
-        }
-        p {
-          margin: 0.2rem 0;
-          font-size: 13px;
-        }
-      }
+    @media (max-width: 767.98px) {
+      padding: 10px;
     }
   }
-}
-
-.command-user__buttons {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  .no-button-payment {
-    display: none;
+  &__image {
+    .product-image {
+      width: 100%;
+      height: 77px;
+    }
   }
-  .btn {
-    padding: 0.6rem 1rem;
-    border-radius: 6px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    margin-top: 0.5rem;
-    font-size: 11px;
-    &-command-paid {
-      width: auto;
-      color: white;
-      background: green;
+  &__item {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    .item-info h3 {
+      font-size: 14px;
+      margin: 0 0 0.3rem 0;
+    }
+    .item-info p {
+      margin: 0.2rem 0;
+      font-size: 13px;
+    }
+  }
+  &__buttons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    .no-button-payment {
+      display: none;
+    }
+    .btn {
       padding: 0.6rem 1rem;
       border-radius: 6px;
       font-weight: bold;
       border: none;
       cursor: pointer;
-    }
-    &-delete {
-      background: red;
-      &.no-button {
-        display: none;
+      margin-top: 0.5rem;
+      font-size: 11px;
+      &-command-paid {
+        width: auto;
+        color: white;
+        background: green;
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
       }
-      &.active-button {
-        display: block;
+      &-delete {
+        background: red;
+        &.no-button {
+          display: none;
+        }
+        &.active-button {
+          display: block;
+        }
       }
     }
   }

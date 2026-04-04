@@ -56,8 +56,7 @@ const MESSAGES = {
 
 const { value: email, errorMessage: errorEmail } = useField<string>('email')
 const { value: password, errorMessage: errorPassword } = useField<string>('password')
-const { value: passwordConfirm, errorMessage: errorPasswordConfirm } =
-  useField<string>('passwordConfirm')
+const { value: passwordConfirm, errorMessage: errorPasswordConfirm } = useField<string>('passwordConfirm')
 
 const onSubmit = handleSubmit(async (data) => {
   try {
@@ -74,6 +73,7 @@ const onSubmit = handleSubmit(async (data) => {
       setErrorMessage(MESSAGES.ERROR_EDIT_USER)
       return
     }
+
     setSuccessMessage(MESSAGES.SUCCESS_EDIT_USER, null)
   } catch (e) {
     const apiError = e?.response?.data

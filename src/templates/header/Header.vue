@@ -2,6 +2,7 @@
 import { useAuthStore } from '@/stores/authStore.ts'
 import { useRouter } from 'vue-router'
 import { onMounted, reactive } from 'vue'
+import Calc from '@/templates/calc/Calc.vue'
 
 const authStore = useAuthStore()
 
@@ -11,10 +12,10 @@ const router = useRouter()
 
 const state = reactive<{
   activeDropdown: string | null
-  openMenuMobile: boolean
+  open: boolean
 }>({
   activeDropdown: '',
-  openMenuMobile: false,
+  open: false,
 })
 
 const openDropdown = (DropType: string | null) => {
@@ -24,6 +25,11 @@ const openDropdown = (DropType: string | null) => {
 const closeDropdown = () => {
   state.activeDropdown = null
 }
+
+const toggleMenuMobile = () => {
+  state.open = !state.open
+}
+
 
 // Gestion de connexion
 
@@ -61,165 +67,155 @@ onMounted(async () => {
 
 <template>
   <header class="header">
-    <div class="d-flex align-items-center">
+    <div class="header__content">
       <!-- Logo -->
-
-      <router-link to="/boutique" class="d-flex align-items-center logo">
+      <router-link to="/" class="header__logo">
         <img src="@/assets/images/3030285.webp" />
         <h1>Dyma</h1>
       </router-link>
-
       <!-- Menu  Desktop -->
-
-      <section class="hide-menu">
-        <ul class="d-flex align-items-center">
-          <li class="mr-10">
-            <router-link to="/">Boutique</router-link>
-          </li>
-          <li
-            v-if="isAdmin()"
-            class="mr-10 dropdown"
-            @mouseover="openDropdown('admin')"
-            @mouseout="closeDropdown()"
-          >
-            <a href="#">Espace pro</a>
-            <div class="dropdown-menu" :class="{ show: state.activeDropdown === 'admin' }">
-              <div class="d-flex flex-column dropdown-menu-link">
-                <router-link to="/command/list">Les commandes</router-link>
-                <router-link to="/product-list">Les produits</router-link>
-                <router-link to="/product-form">Ajouter un Produit</router-link>
-                <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
-                  >Modifier mon compte</router-link
-                >
-              </div>
-              <div class="dropdown-divider"></div>
+      <section class="header__menu">
+        <div class="mr-10">
+          <router-link to="/">Boutique</router-link>
+        </div>
+        <!-- admin -->
+        <div v-if="isAdmin()" class="dropdown" @mouseover="openDropdown('admin')" @mouseout="closeDropdown()">
+          <a href="#">Espace pro</a>
+          <div class="dropdown__menu" :class="{ show: state.activeDropdown === 'admin' }">
+            <div class="dropdown__menu__link">
+              <router-link to="/command/list">Les commandes</router-link>
+              <router-link to="/product-list">Les produits</router-link>
+              <router-link to="/product-form">Ajouter un Produit</router-link>
+              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
             </div>
-          </li>
-
-          <li
-            v-if="isUser()"
-            class="dropdown"
-            @mouseover="openDropdown('user')"
-            @mouseout="closeDropdown()"
-            :class="[isAdmin() ? 'no-profile-user' : null]"
-          >
-            <a href="#">Profil</a>
-            <div class="dropdown-menu" :class="{ show: state.activeDropdown === 'user' }">
-              <div class="d-flex flex-column dropdown-menu-link">
-                <router-link to="/command/user/list">Mes commandes</router-link>
-                <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
-                  >Modifier mon compte</router-link
-                >
-              </div>
-              <div class="dropdown-divider"></div>
+            <div class="dropdown-divider"></div>
+          </div>
+        </div>
+        <!-- user -->
+        <div v-if="isUser()" class="dropdown" @mouseover="openDropdown('user')" @mouseout="closeDropdown()" :class="[ isAdmin() ? 'no-profile-user' : null ]">
+          <a href="#">Profil</a>
+          <div class="dropdown__menu" :class="{ show: state.activeDropdown === 'user' }">
+            <div class="dropdown__menu__link">
+              <router-link to="/command/user/list">Mes commandes</router-link>
+              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
             </div>
-          </li>
-        </ul>
+            <div class="dropdown-divider"></div>
+          </div>
+        </div>
       </section>
     </div>
-
     <!-- Authentification -->
-    <div class="hide-menu">
-      <ul class="d-flex align-items-center">
-        <div v-if="!isLoggedIn()" class="d-flex align-items-center">
-          <li class="mr-10">
-            <router-link :to="{ path: '/register' }">Inscription</router-link>
-          </li>
-          <li>
-            <router-link :to="{ path: '/login' }">Connexion</router-link>
-          </li>
+    <section class="hide-menu">
+      <div v-if="!isLoggedIn()" class="d-flex align-items-center">
+        <div class="mr-10">
+          <router-link :to="{ path: '/register' }">Inscription</router-link>
         </div>
-        <div v-else>
-          <li>
-            <a @click="logout()" href="#">Déconnexion</a>
-          </li>
+        <div>
+          <router-link :to="{ path: '/login' }">Connexion</router-link>
         </div>
-      </ul>
-    </div>
+      </div>
+      <div v-else>
+        <div>
+          <a @click="logout()" href="#">Déconnexion</a>
+        </div>
+      </div>
+    </section>
+  </header>
 
-    <!-- Menu tablet -->
+  <!-- MENU TABLET -->
 
-    <div class="container-tablet">
-      <font-awesome-icon
-        @click="state.openMenuMobile = !state.openMenuMobile"
-        icon="fa-solid fa-bars"
-      />
-      <ul v-if="state.openMenuMobile" class="tablet-menu">
-        <li>
-          <router-link to="/">Boutique</router-link>
-        </li>
-        <li
-          v-if="isAdmin()"
-          class="dropdown"
-          @mouseover="openDropdown('admin')"
-          @mouseout="closeDropdown()"
-        >
-          <a href="#" class="link-profile-admin">Admin</a>
-          <div class="dropdown-menu" :class="{ show: state.activeDropdown === 'admin' }">
-            <div class="d-flex flex-column dropdown-menu-link">
-              <router-link to="/admin">Admin</router-link>
+  <header class="tablet">
+    <Calc :open="state.open" @close="state.open = false" :transparent="true" />
+
+    <router-link to="/" class="tablet__logo">
+      <img src="@/assets/images/3030285.webp" />
+      <h1>Dyma</h1>
+    </router-link>
+
+    <font-awesome-icon @click="toggleMenuMobile()" icon="fa-solid fa-bars" />
+
+    <div v-if="state.open" class="tablet__menu">
+      <div>
+        <router-link to="/">Boutique</router-link>
+      </div>
+
+      <section v-if="isAdmin()" class="dropdown-tablet">
+
+          <div class="dropdown-tablet__menu" :class="{ show: state.activeDropdown === 'admin' }">
+            <div class="dropdown-tablet__menu__link">
               <router-link to="/command/list">Les commandes</router-link>
-              <router-link to="/product-form">Ajout Produit</router-link>
-              <router-link to="/product/list">Les produits</router-link>
-              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
-                >Modifier mon compte</router-link
-              >
+              <router-link to="/product-list">Les produits</router-link>
+              <router-link to="/product-form">Ajouter un Produit</router-link>
+              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
             </div>
             <div class="dropdown-divider"></div>
           </div>
-        </li>
 
-        <li
-          v-if="isUser()"
-          class="dropdown"
-          @mouseover="openDropdown('user')"
-          @mouseout="closeDropdown()"
-          :class="[isAdmin() ? 'no-profile-user' : null]"
-        >
-          <a href="#" class="link-profile-user">Profil</a>
-          <div class="dropdown-menu" :class="{ show: (state.activeDropdown = 'user') }">
-            <div class="d-flex flex-column dropdown-menu-link">
+      </section>
+
+      <section v-if="isUser()" class="dropdown-tablet" :class="[ isAdmin() ? 'no-profile-user' : true ]">
+
+          <div class="dropdown-tablet__menu">
+            <div class="dropdown-tablet__menu__link">
               <router-link to="/command/user/list">Mes commandes</router-link>
-              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }"
-                >Modifier mon compte</router-link
-              >
+              <router-link :to="{ name: 'account-user-edit', params: { id: authStore.userId } }">Modifier mon compte</router-link>
             </div>
             <div class="dropdown-divider"></div>
           </div>
-        </li>
 
-        <div v-if="!isLoggedIn()">
-          <li>
-            <router-link :to="{ path: '/register' }">Inscription</router-link>
-          </li>
-          <li>
-            <router-link :to="{ path: '/login' }">Connexion</router-link>
-          </li>
+      </section>
+
+      <section v-if="!isLoggedIn()">
+        <div>
+          <router-link :to="{ path: '/register' }">Inscription</router-link>
         </div>
-        <div v-else>
-          <li>
-            <a @click="logout()" href="#">Déconnexion</a>
-          </li>
+        <div>
+          <router-link :to="{ path: '/login' }">Connexion</router-link>
         </div>
-      </ul>
+      </section>
+      <section v-else>
+        <div>
+          <a @click="logout()" href="#">Déconnexion</a>
+        </div>
+      </section>
     </div>
   </header>
 </template>
 
 <style scoped lang="scss">
 @use '@/assets/scss/mixins' as m;
-// Header
+
+/*=========================
+  Header
+======================== */
+
+a {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+}
+
+.router-link-active {
+  text-decoration: underline;
+}
 
 .header {
   padding: 0 10px 0 5px;
   background-color: var(--primary-1);
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  .logo {
-    text-decoration: none;
+  @media (max-width: 991.98px) {
+    display: none;
+  }
+  &__content {
+    display: flex;
+    align-items: center;
+    color: var(--text-primary-color);
+  }
+  &__logo {
+    display: flex;
+    align-items: center;
     img {
       height: 28px;
       width: auto;
@@ -231,45 +227,25 @@ onMounted(async () => {
       margin-right: 20px;
     }
   }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  &__menu {
     display: flex;
     align-items: center;
-    li {
-      a {
-        font-size: 15px;
-        color: var(--text-primary-color);
-      }
-    }
   }
 }
 
-// Suppression du profil User en role Admin
+/*=========================
+  Menu desktop
+======================== */
 
 .dropdown {
+  z-index: 2;
+  position: relative;
   &.no-profile-user {
     display: none;
   }
-}
-
-// Menu déroulant
-
-.dropdown {
-  z-index: 1;
-  position: relative;
-  .link-profile-user,
-  .link-profile-admin {
-    @media (max-width: 991.98px) {
-      display: none;
-    }
-  }
-  .dropdown-menu {
+  &__menu {
     position: absolute;
-    box-shadow:
-      var(--gray-2) 0px 6px 12px -2px,
-      var(--gray-2) 0px 3px 7px -3px;
+    box-shadow: var(--gray-2) 0px 6px 12px -2px, var(--gray-2) 0px 3px 7px -3px;
     padding: 10px 12px;
     background-color: var(--text-primary-color);
     top: 35px;
@@ -288,39 +264,64 @@ onMounted(async () => {
       opacity: 1;
       visibility: visible;
     }
-    .dropdown-menu-link {
-      line-height: 26px;
-    }
-    .dropdown-menu-link a {
-      font-size: 13px;
-      color: var(--gray-3);
-    }
-    .dropdown-divider {
-      border-bottom: var(--border);
-      margin-top: 10px;
-    }
+  }
+  &__menu__link {
+    line-height: 26px;
+    display: flex;
+    flex-direction: column;
+    color: var(--gray-3);
+  }
+  &__menu__link a {
+    font-size: 13px;
+    color: var(--gray-3);
+  }
+  .dropdown-divider {
+    border-bottom: var(--border);
+    margin-top: 10px;
   }
 }
 
-// Menu tablet
+/*=========================
+  Tablet
+======================== */
 
-.container-tablet {
+.tablet {
+  display: none;
+  z-index: 2;
   position: relative;
-  @include m.lg {
-    display: none;
+  padding: 0 10px 0 5px;
+  background-color: var(--primary-1);
+  @media (max-width: 991.98px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__logo {
+    display: flex;
+    align-items: center;
+    img {
+      height: 28px;
+      width: auto;
+      margin-right: 3px;
+    }
+    h1 {
+      font-size: 16px;
+      color: var(--text-primary-color);
+      margin-right: 20px;
+    }
   }
   .fa-bars {
     cursor: pointer;
     color: var(--text-primary-color);
     font-size: 20px;
   }
-  .tablet-menu {
+  &__menu {
     position: absolute;
     background-color: var(--text-primary-color);
     border: var(--border);
     padding: 20px 20px;
-    top: 37px;
-    right: -5px;
+    top: 52px;
+    right: 5px;
     line-height: 30px;
     display: flex;
     flex-direction: column;
@@ -329,6 +330,51 @@ onMounted(async () => {
       font-size: 14px;
       color: var(--gray-3);
     }
+    .dropdown-menu-link a {
+      font-size: 14px;
+      color: var(--gray-3);
+    }
   }
 }
+
+/*=========================
+  Menu tablet
+======================== */
+
+.dropdown-tablet {
+  z-index: 2;
+  position: relative;
+  &.no-profile-user {
+    display: none;
+  }
+  &__menu {
+    position: absolute;
+    box-shadow: var(--gray-2) 0px 6px 12px -2px, var(--gray-2) 0px 3px 7px -3px;
+    padding: 10px 12px;
+    background-color: var(--text-primary-color);
+    transition: all 500ms ease;
+    width: 290px;
+    @media (max-width: 991.98px) {
+      width: 150px;
+      position: inherit;
+      box-shadow: none;
+      padding: 0;
+    }
+  }
+  &__menu__link {
+    line-height: 26px;
+    display: flex;
+    flex-direction: column;
+    color: var(--gray-3);
+  }
+  &__menu__link a {
+    font-size: 13px;
+    color: var(--gray-3);
+  }
+  .dropdown-divider {
+    border-bottom: var(--border);
+    margin-top: 10px;
+  }
+}
+
 </style>

@@ -58,7 +58,16 @@ const addProductToCart = async (id: number) => {
     border-bottom: var(--border);
     border-top-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
-    height: 410px;
+    height: 350px;
+    object-fit: cover;
+    @media (max-width: 1600px) {
+      height: 350px;
+      width: 100%;
+    }
+    @media (max-width: 768.98px) {
+      height: 250px;
+      width: 100%;
+    }
   }
   &_content {
     padding: 10px;

@@ -44,6 +44,8 @@ const selectedPreparationStatus = (command) => {
       return 'status-shipped'
     case 'Livré':
       return 'status-delivered'
+    case 'Annulée':
+      return 'status-cancelled'
     default:
       return ''
   }
@@ -86,16 +88,22 @@ const formatedAt = (date: Date) => {
 
   <!-- commandes client -->
   <section v-else-if="commandAdminStore.commands.length > 0" class="command-user">
-    <div v-for="command in commands" :key="command.id" class="command-card">
+    <div v-for="command in commands" :key="command.id" class="command-user__card">
       <!-- Items de la commande -->
-      <div v-for="item in command.commandItems" :key="item.id" class="command-item">
+      <div v-for="item in command.commandItems" :key="item.id" class="command-user__item">
         <div class="item-image">
           <img
             v-if="item.product.pictures.length"
             :src="item.product.pictures[0].filename"
+            class="img-product"
             alt="Produit"
           />
-          <img v-else src="@/assets/images/not-found.webp" alt="Produit manquant" />
+          <img
+            v-else
+            src="@/assets/images/not-found.webp"
+            class="img-product"
+            alt="Produit manquant"
+          />
         </div>
 
         <div class="item-info">
@@ -121,8 +129,9 @@ const formatedAt = (date: Date) => {
           </span>
         </p>
 
-        <p>Client : {{ command.firstName }} {{ command.lastName }}</p>
-        <p>Adresse : {{ command.address }} {{ command.zipCode }} {{ command.city }}</p>
+        <p><strong>Client : </strong>{{ command.firstName }} {{ command.lastName }}</p>
+        <p><strong>Rue : </strong>{{ command.address }}</p>
+        <p><strong>Ville : </strong>{{ command.zipCode }} {{ command.city }}</p>
       </div>
 
       <!-- Bouton préparation de la commande -->
@@ -136,6 +145,7 @@ const formatedAt = (date: Date) => {
           <option value="">
             -- {{ statusPreparation ? statusPreparation : 'Status de la commande' }} --
           </option>
+          <option value="Annulée">Annulée</option>
           <option value="En cours">En cours</option>
           <option value="Expédié">Expédié</option>
           <option value="Livré">Livré</option>
@@ -143,6 +153,7 @@ const formatedAt = (date: Date) => {
       </div>
 
       <!-- Bouton supprimer commande -->
+
       <button
         @click="removeCommand(command.id)"
         :class="commandDelivered(command) ? 'active-button' : 'no-button'"
@@ -200,77 +211,22 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 
-.command-user__status {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  p,
-  span {
-    font-size: 13px;
-  }
-  .status-pending {
-    color: orange;
-    font-weight: bold;
-  }
-  .status-shipped {
-    color: #3498db;
-    font-weight: bold;
-  }
-  .status-paid {
-    color: #2ecc71;
-    font-weight: bold;
-  }
-  .status-delivered {
-    color: #2ecc71;
-    font-weight: bold;
-  }
-  .status-failed {
-    color: red;
-    font-weight: bold;
-  }
-  .status-cancelled {
-    color: red;
-    font-weight: bold;
-  }
-}
-
 .command-user {
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  .command-card {
+  @media (max-width: 768.98px) {
+    padding: 10px;
+  }
+  &__card {
     position: relative;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 1rem;
     background: #f9f9f9;
-    .command-item {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      margin-bottom: 1rem;
-      .item-image {
-        width: 80px;
-        height: 80px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 6px;
-        }
-      }
-      .item-info {
-        flex: 1;
-        h3 {
-          font-size: 13px;
-          margin: 0 0 0.4rem 0;
-        }
-        p {
-          margin: 0.4rem 0;
-          font-size: 12px;
-        }
-      }
+    @media (max-width: 768.98px) {
+      padding: 10px;
     }
     button {
       padding: 0.5rem 1rem;
@@ -300,6 +256,77 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 
+.command-user__item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  @media (max-width: 768.98px) {
+    align-items: initial;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+    gap: 0.8rem;
+  }
+  .item-image {
+    width: 100px;
+    height: 100px;
+    .img-product {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+  }
+  .item-info {
+    flex: 1;
+    h3 {
+      font-size: 13px;
+      margin: 0 0 0.4rem 0;
+    }
+    p {
+      margin: 0.4rem 0;
+      font-size: 12px;
+    }
+  }
+}
+
+.command-user__status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  p,
+  span {
+    font-size: 13px;
+  }
+  strong {
+    font-size: 12px;
+  }
+  .status-pending {
+    color: orange;
+    font-weight: bold;
+  }
+  .status-shipped {
+    color: #3498db;
+    font-weight: bold;
+  }
+  .status-paid {
+    color: #2ecc71;
+    font-weight: bold;
+  }
+  .status-delivered {
+    color: #2ecc71;
+    font-weight: bold;
+  }
+  .status-failed {
+    color: red;
+    font-weight: bold;
+  }
+  .status-cancelled {
+    color: red;
+    font-weight: bold;
+  }
+}
+
 .command-user__preparation__status {
   display: flex;
   flex-direction: column;
@@ -312,6 +339,9 @@ $shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     text-align: center;
     padding: 6px;
     cursor: pointer;
+    @media (max-width: 768.98px) {
+      width: 100%;
+    }
   }
 }
 

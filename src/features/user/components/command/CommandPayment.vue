@@ -8,13 +8,12 @@ import { loadStripe } from '@stripe/stripe-js'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
-const cartStore = useCartStore()
-
-const commandStore = useCommandUserStore()
+const BASE_URL = import.meta.env.VITE_APP_API_URL as string
 
 const route = useRoute()
 
-const BASE_URL = import.meta.env.VITE_APP_API_URL as string
+const cartStore = useCartStore()
+const commandStore = useCommandUserStore()
 
 const stripe = ref(null)
 const cardStripe = ref(null)
@@ -27,22 +26,17 @@ type Command = {
 }
 
 const stateCommand = reactive<Command>({
-  id: 0,
+  id: 0
 })
 
 onMounted(async () => {
   try {
-    //await strypePayment()
-
     // Commande depuis le profil user
-
     const id = Number(route.params.id)
-
     if (id) {
       const command = await commandStore.getCurrentCommand(id)
       Object.assign(stateCommand, {
         id: command.id,
-        commandItems: command.commandItems,
       })
     } else {
       // Commande depuis le panier
